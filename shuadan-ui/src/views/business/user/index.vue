@@ -25,7 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户手机号" prop="phone">
+      <el-form-item label="手机号" prop="phone">
         <el-input
           v-model="queryParams.phone"
           placeholder="请输入用户手机号"
@@ -33,26 +33,17 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="开户行" prop="bankName">
-        <el-input
-          v-model="queryParams.bankName"
-          placeholder="请输入开户行"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="状态" prop="bankName">
+        <el-select v-model="queryParams.status" placeholder="请选择">
+          <el-option value="" label="全部"></el-option>
+          <el-option value="1" label="收入"></el-option>
+          <el-option value="2" label="支出"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="银行卡号" prop="bankNo">
         <el-input
           v-model="queryParams.bankNo"
           placeholder="请输入银行卡号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="开户行地址" prop="bankAddr">
-        <el-input
-          v-model="queryParams.bankAddr"
-          placeholder="请输入开户行地址"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -81,23 +72,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="层级数" prop="userAgentLevel">
-        <el-input
-          v-model="queryParams.userAgentLevel"
-          placeholder="请输入层级数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="注册时间">
+      <el-form-item label="注册时间" prop="registerTime">
         <el-date-picker
-          v-model="daterangeRegisterTime"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
+          v-model="dateRange"
+          style="width: 340px"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
           range-separator="-"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          :picker-options="pickerOptions"
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -159,9 +143,9 @@
       <el-table-column label="昵称" align="center" prop="nickName" />
       <el-table-column label="用户余额" align="center" prop="balance" />
       <el-table-column label="冻结金额" align="center" prop="freezeBalance" />
-      <el-table-column label="登录密码" align="center" prop="loginPwd" />
-      <el-table-column label="支付密码" align="center" prop="payPwd" />
-      <el-table-column label="状态(0:正常 1:冻结)" align="center" prop="status">
+      <!-- <el-table-column label="登录密码" align="center" prop="loginPwd" /> -->
+      <!-- <el-table-column label="支付密码" align="center" prop="payPwd" /> -->
+      <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
@@ -174,8 +158,8 @@
         </template>
       </el-table-column>
       <el-table-column label="真实姓名" align="center" prop="realName" />
-      <el-table-column label="用户手机号" align="center" prop="phone" />
-      <el-table-column label="银行信息" align="center" prop="bankName">
+      <el-table-column label="手机号" align="center" prop="phone" />
+      <el-table-column label="银行信息" align="center" prop="bankName" width="200">
         <template slot-scope="scope">
           <div>{{scope.row.bankName}}</div>
           <div>{{scope.row.bankNo}}</div>
@@ -347,6 +331,7 @@
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser } from "@/api/business/user";
+import { dateFormat } from '@/utils/auth'
 
 export default {
   name: "User",
@@ -381,15 +366,13 @@ export default {
         status: null,
         realName: null,
         phone: null,
-        bankName: null,
         bankNo: null,
-        bankAddr: null,
         levelId: null,
         inviteCode: null,
         userAgent: null,
         userAgentNode: null,
-        userAgentLevel: null,
         registerTime: null,
+        status: '',
       },
       // 表单参数
       form: {},
@@ -401,10 +384,40 @@ export default {
         loginPwd: [
           { required: true, message: "登录密码不能为空", trigger: "blur" }
         ],
-      }
+      },
+      // 时间
+      dateRange:[],
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
     };
   },
   created() {
+    this.getDefaultTime()
     this.getList();
   },
   methods: {
@@ -416,7 +429,7 @@ export default {
         this.queryParams.params["beginRegisterTime"] = this.daterangeRegisterTime[0];
         this.queryParams.params["endRegisterTime"] = this.daterangeRegisterTime[1];
       }
-      listUser(this.queryParams).then(response => {
+      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.userList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -548,6 +561,13 @@ export default {
         this.$modal.msgSuccess("修改成功");
       });
     },
+    getDefaultTime() {
+      let end = new Date();
+      let start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      this.dateRange[0] = dateFormat("YYYY-mm-dd" , start) + ' 00:00:00'
+      this.dateRange[1] = dateFormat("YYYY-mm-dd" , end) + ' 23:59:59'
+    }
   }
 };
 </script>
