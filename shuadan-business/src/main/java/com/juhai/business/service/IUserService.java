@@ -1,6 +1,8 @@
 package com.juhai.business.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.juhai.business.domain.User;
 
 /**
@@ -9,7 +11,7 @@ import com.juhai.business.domain.User;
  * @author zhaotiezhu
  * @date 2023-06-12
  */
-public interface IUserService 
+public interface IUserService extends IService<User>
 {
     /**
      * 查询会员列表

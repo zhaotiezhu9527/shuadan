@@ -1,6 +1,8 @@
 package com.juhai.business.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.juhai.business.domain.User;
 
 /**
@@ -9,7 +11,7 @@ import com.juhai.business.domain.User;
  * @author zhaotiezhu
  * @date 2023-06-12
  */
-public interface UserMapper 
+public interface UserMapper extends BaseMapper<User>
 {
     /**
      * 查询会员列表

@@ -1,25 +1,27 @@
 package com.juhai.web.controller.business;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.juhai.business.domain.User;
+import com.juhai.business.service.IUserService;
+import com.juhai.common.annotation.Anonymous;
 import com.juhai.common.annotation.Log;
 import com.juhai.common.core.controller.BaseController;
 import com.juhai.common.core.domain.AjaxResult;
-import com.juhai.common.enums.BusinessType;
-import com.juhai.business.domain.User;
-import com.juhai.business.service.IUserService;
-import com.juhai.common.utils.poi.ExcelUtil;
 import com.juhai.common.core.page.TableDataInfo;
+import com.juhai.common.enums.BusinessType;
+import com.juhai.common.utils.DateUtils;
+import com.juhai.common.utils.poi.ExcelUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 会员列表Controller
@@ -100,5 +102,56 @@ public class UserController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(userService.deleteUserByIds(ids));
+    }
+
+
+    /**
+     * 今日总报表
+     */
+    @Anonymous
+    @GetMapping("/allReport")
+    public AjaxResult allReport()
+    {
+        Date today = new Date();
+        Date todayBegin = DateUtil.beginOfDay(today);
+        Date todayEnd = DateUtil.endOfDay(today);
+
+        DateTime yesterday = DateUtil.offsetDay(today, -1);
+        Date yesterdayBegin = DateUtil.beginOfDay(yesterday);
+        Date yesterdayEnd = DateUtil.endOfDay(yesterday);
+
+        JSONObject object = new JSONObject();
+        // 商品
+        object.put("totalGoods", 0);
+        object.put("todayUsers", 0);
+        object.put("yesterdayUsers", 0);
+        // 用户总量
+        long totalUsers = userService.count();
+        object.put("totalUsers", totalUsers);
+        long todayUsers = userService.count(new LambdaQueryWrapper<User>().between(User::getRegisterTime, todayBegin, todayEnd));
+        object.put("todayUsers", todayUsers);
+        long yesterdayUsers = userService.count(new LambdaQueryWrapper<User>().between(User::getRegisterTime, yesterdayBegin, yesterdayEnd));
+        object.put("yesterdayUsers", yesterdayUsers);
+        // 订单总量
+        object.put("totalOrders", 0);
+        object.put("todayOrders", 0);
+        object.put("yesterdayOrders", 0);
+        // 订单总金额
+        object.put("totalOrderAmounts", 0);
+        object.put("todayOrderAmounts", 0);
+        object.put("yesterdayOrderAmounts", 0);
+        // 用户充值
+        object.put("totalDepositAmounts", 0);
+        object.put("todayDepositAmounts", 0);
+        object.put("yesterdayDepositAmounts", 0);
+        // 用户提现
+        object.put("totalWithdrawAmounts", 0);
+        object.put("todayWithdrawAmounts", 0);
+        object.put("yesterdayWithdrawAmounts", 0);
+        // 抢单佣金
+        object.put("totalCommissionAmounts", 0);
+        object.put("todayCommissionAmounts", 0);
+        object.put("yesterdayCommissionAmounts", 0);
+        return AjaxResult.success(object);
     }
 }
