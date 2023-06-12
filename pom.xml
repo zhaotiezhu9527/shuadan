@@ -30,6 +30,7 @@
         <poi.version>4.1.2</poi.version>
         <velocity.version>2.3</velocity.version>
         <jwt.version>0.9.1</jwt.version>
+        <hutool.version>5.8.16</hutool.version>
     </properties>
 	
     <!-- 依赖声明 -->
@@ -170,6 +171,28 @@
                 <version>${shuadan.version}</version>
             </dependency>
 
+            <!-- 业务模块-->
+            <dependency>
+                <groupId>com.juhai</groupId>
+                <artifactId>shuadan-business</artifactId>
+                <version>${shuadan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2021.0.4.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2020.0.6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
