@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.juhai.business.domain.User;
 import com.juhai.business.service.IUserService;
@@ -128,9 +129,18 @@ public class UserController extends BaseController
         // 用户总量
         long totalUsers = userService.count();
         object.put("totalUsers", totalUsers);
-        long todayUsers = userService.count(new LambdaQueryWrapper<User>().between(User::getRegisterTime, todayBegin, todayEnd));
+        List<User> users = userService.list(new LambdaQueryWrapper<User>().between(User::getRegisterTime, todayBegin, yesterdayEnd));
+        long todayUsers = 0;
+        long yesterdayUsers = 0;
+        for (User user : users) {
+            if (DateUtil.isIn(user.getRegisterTime(), todayBegin, todayEnd)) {
+                todayUsers += 1;
+            }
+            if (DateUtil.isIn(user.getRegisterTime(), yesterdayBegin, yesterdayEnd)) {
+                yesterdayUsers += 1;
+            }
+        }
         object.put("todayUsers", todayUsers);
-        long yesterdayUsers = userService.count(new LambdaQueryWrapper<User>().between(User::getRegisterTime, yesterdayBegin, yesterdayEnd));
         object.put("yesterdayUsers", yesterdayUsers);
         // 订单总量
         object.put("totalOrders", 0);
@@ -152,6 +162,9 @@ public class UserController extends BaseController
         object.put("totalCommissionAmounts", 0);
         object.put("todayCommissionAmounts", 0);
         object.put("yesterdayCommissionAmounts", 0);
+        // 用户总金额
+        User totalUserBalance = userService.getOne(new QueryWrapper<User>().select("sum(balance) as balance"));
+        object.put("totalUserBalance", totalUserBalance.getBalance());
         return AjaxResult.success(object);
     }
 }
