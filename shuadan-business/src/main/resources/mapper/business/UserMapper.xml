@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juhai.business.mapper.UserMapper">
+    
+    <resultMap type="User" id="UserResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="balance"    column="balance"    />
+        <result property="freezeBalance"    column="freeze_balance"    />
+        <result property="loginPwd"    column="login_pwd"    />
+        <result property="payPwd"    column="pay_pwd"    />
+        <result property="status"    column="status"    />
+        <result property="realName"    column="real_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="bankNo"    column="bank_no"    />
+        <result property="bankAddr"    column="bank_addr"    />
+        <result property="creditValue"    column="credit_value"    />
+        <result property="levelId"    column="level_id"    />
+        <result property="avatarId"    column="avatar_id"    />
+        <result property="inviteCode"    column="invite_code"    />
+        <result property="userAgent"    column="user_agent"    />
+        <result property="userAgentNode"    column="user_agent_node"    />
+        <result property="userAgentLevel"    column="user_agent_level"    />
+        <result property="registerTime"    column="register_time"    />
+        <result property="registerIp"    column="register_ip"    />
+        <result property="lastTime"    column="last_time"    />
+        <result property="lastIp"    column="last_ip"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="updateOrder"    column="update_order"    />
+        <result property="deposit"    column="deposit"    />
+        <result property="withdraw"    column="withdraw"    />
+        <result property="income"    column="income"    />
+        <result property="bet"    column="bet"    />
+        <result property="inviteCount"    column="invite_count"    />
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select id, user_name, nick_name, balance, freeze_balance, login_pwd, pay_pwd, status, real_name, phone, bank_name, bank_no, bank_addr, credit_value, level_id, avatar_id, invite_code, user_agent, user_agent_node, user_agent_level, register_time, register_ip, last_time, last_ip, create_time, create_by, update_time, update_by, remake, update_order, deposit, withdraw, income, bet, invite_count from t_user
+    </sql>
+
+    <select id="selectUserList" parameterType="User" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="bankName != null  and bankName != ''"> and bank_name = #{bankName}</if>
+            <if test="bankNo != null  and bankNo != ''"> and bank_no = #{bankNo}</if>
+            <if test="bankAddr != null  and bankAddr != ''"> and bank_addr = #{bankAddr}</if>
+            <if test="levelId != null "> and level_id = #{levelId}</if>
+            <if test="inviteCode != null  and inviteCode != ''"> and invite_code = #{inviteCode}</if>
+            <if test="userAgent != null  and userAgent != ''"> and user_agent = #{userAgent}</if>
+            <if test="userAgentNode != null  and userAgentNode != ''"> and user_agent_node like concat('%', #{userAgentNode}, '%')</if>
+            <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
+            <if test="params.beginRegisterTime != null and params.beginRegisterTime != '' and params.endRegisterTime != null and params.endRegisterTime != ''"> and register_time between #{params.beginRegisterTime} and #{params.endRegisterTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserById" parameterType="Long" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="balance != null">balance,</if>
+            <if test="freezeBalance != null">freeze_balance,</if>
+            <if test="loginPwd != null and loginPwd != ''">login_pwd,</if>
+            <if test="payPwd != null">pay_pwd,</if>
+            <if test="status != null">status,</if>
+            <if test="realName != null">real_name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="bankNo != null">bank_no,</if>
+            <if test="bankAddr != null">bank_addr,</if>
+            <if test="creditValue != null">credit_value,</if>
+            <if test="levelId != null">level_id,</if>
+            <if test="avatarId != null">avatar_id,</if>
+            <if test="inviteCode != null">invite_code,</if>
+            <if test="userAgent != null">user_agent,</if>
+            <if test="userAgentNode != null">user_agent_node,</if>
+            <if test="userAgentLevel != null">user_agent_level,</if>
+            <if test="registerTime != null">register_time,</if>
+            <if test="registerIp != null">register_ip,</if>
+            <if test="lastTime != null">last_time,</if>
+            <if test="lastIp != null">last_ip,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="updateOrder != null">update_order,</if>
+            <if test="deposit != null">deposit,</if>
+            <if test="withdraw != null">withdraw,</if>
+            <if test="income != null">income,</if>
+            <if test="bet != null">bet,</if>
+            <if test="inviteCount != null">invite_count,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="balance != null">#{balance},</if>
+            <if test="freezeBalance != null">#{freezeBalance},</if>
+            <if test="loginPwd != null and loginPwd != ''">#{loginPwd},</if>
+            <if test="payPwd != null">#{payPwd},</if>
+            <if test="status != null">#{status},</if>
+            <if test="realName != null">#{realName},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="bankNo != null">#{bankNo},</if>
+            <if test="bankAddr != null">#{bankAddr},</if>
+            <if test="creditValue != null">#{creditValue},</if>
+            <if test="levelId != null">#{levelId},</if>
+            <if test="avatarId != null">#{avatarId},</if>
+            <if test="inviteCode != null">#{inviteCode},</if>
+            <if test="userAgent != null">#{userAgent},</if>
+            <if test="userAgentNode != null">#{userAgentNode},</if>
+            <if test="userAgentLevel != null">#{userAgentLevel},</if>
+            <if test="registerTime != null">#{registerTime},</if>
+            <if test="registerIp != null">#{registerIp},</if>
+            <if test="lastTime != null">#{lastTime},</if>
+            <if test="lastIp != null">#{lastIp},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="updateOrder != null">#{updateOrder},</if>
+            <if test="deposit != null">#{deposit},</if>
+            <if test="withdraw != null">#{withdraw},</if>
+            <if test="income != null">#{income},</if>
+            <if test="bet != null">#{bet},</if>
+            <if test="inviteCount != null">#{inviteCount},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update t_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="balance != null">balance = #{balance},</if>
+            <if test="freezeBalance != null">freeze_balance = #{freezeBalance},</if>
+            <if test="loginPwd != null and loginPwd != ''">login_pwd = #{loginPwd},</if>
+            <if test="payPwd != null">pay_pwd = #{payPwd},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="realName != null">real_name = #{realName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="bankName != null">bank_name = #{bankName},</if>
+            <if test="bankNo != null">bank_no = #{bankNo},</if>
+            <if test="bankAddr != null">bank_addr = #{bankAddr},</if>
+            <if test="creditValue != null">credit_value = #{creditValue},</if>
+            <if test="levelId != null">level_id = #{levelId},</if>
+            <if test="avatarId != null">avatar_id = #{avatarId},</if>
+            <if test="inviteCode != null">invite_code = #{inviteCode},</if>
+            <if test="userAgent != null">user_agent = #{userAgent},</if>
+            <if test="userAgentNode != null">user_agent_node = #{userAgentNode},</if>
+            <if test="userAgentLevel != null">user_agent_level = #{userAgentLevel},</if>
+            <if test="registerTime != null">register_time = #{registerTime},</if>
+            <if test="registerIp != null">register_ip = #{registerIp},</if>
+            <if test="lastTime != null">last_time = #{lastTime},</if>
+            <if test="lastIp != null">last_ip = #{lastIp},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="updateOrder != null">update_order = #{updateOrder},</if>
+            <if test="deposit != null">deposit = #{deposit},</if>
+            <if test="withdraw != null">withdraw = #{withdraw},</if>
+            <if test="income != null">income = #{income},</if>
+            <if test="bet != null">bet = #{bet},</if>
+            <if test="inviteCount != null">invite_count = #{inviteCount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="Long">
+        delete from t_user where id = #{id}
+    </delete>
+
+    <delete id="deleteUserByIds" parameterType="String">
+        delete from t_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

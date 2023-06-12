@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juhai.business.mapper.CustomerServiceMapper">
+    
+    <resultMap type="CustomerService" id="CustomerServiceResult">
+        <result property="id"    column="id"    />
+        <result property="serviceName"    column="service_name"    />
+        <result property="serviceLink"    column="service_link"    />
+        <result property="workTime"    column="work_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="status"    column="status"    />
+        <result property="pxh"    column="pxh"    />
+    </resultMap>
+
+    <sql id="selectCustomerServiceVo">
+        select id, service_name, service_link, work_time, create_time, create_by, update_time, update_by, remake, status, pxh from t_customer_service
+    </sql>
+
+    <select id="selectCustomerServiceList" parameterType="CustomerService" resultMap="CustomerServiceResult">
+        <include refid="selectCustomerServiceVo"/>
+        <where>  
+            <if test="serviceName != null  and serviceName != ''"> and service_name like concat('%', #{serviceName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerServiceById" parameterType="Long" resultMap="CustomerServiceResult">
+        <include refid="selectCustomerServiceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCustomerService" parameterType="CustomerService" useGeneratedKeys="true" keyProperty="id">
+        insert into t_customer_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="serviceName != null">service_name,</if>
+            <if test="serviceLink != null">service_link,</if>
+            <if test="workTime != null">work_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="status != null">status,</if>
+            <if test="pxh != null">pxh,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="serviceName != null">#{serviceName},</if>
+            <if test="serviceLink != null">#{serviceLink},</if>
+            <if test="workTime != null">#{workTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="status != null">#{status},</if>
+            <if test="pxh != null">#{pxh},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomerService" parameterType="CustomerService">
+        update t_customer_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serviceName != null">service_name = #{serviceName},</if>
+            <if test="serviceLink != null">service_link = #{serviceLink},</if>
+            <if test="workTime != null">work_time = #{workTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="pxh != null">pxh = #{pxh},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCustomerServiceById" parameterType="Long">
+        delete from t_customer_service where id = #{id}
+    </delete>
+
+    <delete id="deleteCustomerServiceByIds" parameterType="String">
+        delete from t_customer_service where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
