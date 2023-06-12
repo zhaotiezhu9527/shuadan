@@ -1,4 +1,5 @@
 <template>
+  <!-- 会员等级 -->
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="等级名称" prop="levelName">

@@ -1,11 +1,11 @@
 <template>
-  <!-- 客服列表 -->
+  <!-- 商品专区 -->
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="客服名称" prop="serviceName">
+      <el-form-item label="区域名称" prop="areaName">
         <el-input
-          v-model="queryParams.serviceName"
-          placeholder="请输入客服名称"
+          v-model="queryParams.areaName"
+          placeholder="请输入区域名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -24,7 +24,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['business:service:add']"
+          v-hasPermi="['business:area:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -35,7 +35,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['business:service:edit']"
+          v-hasPermi="['business:area:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -46,7 +46,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['business:service:remove']"
+          v-hasPermi="['business:area:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -56,19 +56,28 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['business:service:export']"
+          v-hasPermi="['business:area:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="serviceList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="areaList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" width="40" />
-      <el-table-column label="客服名称" align="center" prop="serviceName" />
-      <el-table-column label="客服链接" align="center" prop="serviceLink" />
-      <el-table-column label="工作时间" align="center" prop="workTime" />
-      <el-table-column label="备注" align="center" prop="remake" />
+      <el-table-column label="区域名称" align="center" prop="areaName" />
+      <el-table-column label="区域图片" align="center" prop="areaIcon" width="120">
+        <template slot-scope="scope">
+          <img class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.areaIcon" />
+        </template>
+      </el-table-column>
+      <el-table-column label="专区金额" align="center" prop="areaBalance" />
+      <el-table-column label="等级" align="center" prop="levelId">
+        <template slot-scope="scope">
+          <span>{{ scope.row.level ? scope.row.level.levelName : '' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <el-switch
@@ -80,7 +89,7 @@
             inactive-color="#ff4949">
           </el-switch>
         </template>
-      </el-table-column>
+      </el-table-column> 
       <el-table-column label="排序号" align="center" prop="pxh" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -89,14 +98,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['business:service:edit']"
+            v-hasPermi="['business:area:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['business:service:remove']"
+            v-hasPermi="['business:area:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -110,20 +119,33 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改客服列表对话框 -->
+    <!-- 添加或修改商品分类对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="客服名称" prop="serviceName">
-          <el-input v-model="form.serviceName" placeholder="请输入客服名称" />
+        <el-form-item label="区域名称" prop="areaName">
+          <el-input v-model="form.areaName" placeholder="请输入区域名称" />
         </el-form-item>
-        <el-form-item label="客服链接" prop="serviceLink">
-          <el-input v-model="form.serviceLink" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="区域图片" prop="areaIcon">
+          <el-upload
+            class="avatar-uploader"
+            :action="upload.url"
+            :file-list="upload.fileList"
+            :headers="upload.headers"
+            :show-file-list="false"
+            :on-success="successHandle"
+            :before-upload="beforeUploadHandle">
+            <img v-if="form.areaIcon" :src="resourceDomain.resourceDomain + form.areaIcon" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-form-item>
-        <el-form-item label="工作时间" prop="workTime">
-          <el-input v-model="form.workTime" placeholder="请输入工作时间" />
+        <el-form-item label="专区金额" prop="areaBalance">
+          <el-input v-model="form.areaBalance" placeholder="请输入专区金额" />
         </el-form-item>
-        <el-form-item label="备注" prop="remake">
-          <el-input v-model="form.remake" placeholder="请输入备注" />
+        <el-form-item label="等级ID" prop="levelId">
+          <el-input v-model="form.levelId" placeholder="请输入等级ID" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
         <el-form-item label="排序号" prop="pxh">
           <el-input v-model="form.pxh" placeholder="请输入排序号" />
@@ -138,10 +160,12 @@
 </template>
 
 <script>
-import { listService, getService, delService, addService, updateService } from "@/api/business/service";
+import { listArea, getArea, delArea, addArea, updateArea } from "@/api/business/area";
+import { getToken } from "@/utils/auth";
+import Cookies from "js-cookie";
 
 export default {
-  name: "Service",
+  name: "Area",
   data() {
     return {
       // 遮罩层
@@ -156,8 +180,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 客服列表表格数据
-      serviceList: [],
+      // 商品分类表格数据
+      areaList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -166,25 +190,38 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        serviceName: null,
+        areaName: null,
         status: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      resourceDomain: {},
+      // 上传参数
+      upload: {
+        // 是否禁用上传
+        isUploading: false,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/system/info/upload",
+        // 上传的文件列表
+        fileList: []
+      },
     };
   },
   created() {
     this.getList();
+    this.getCookie()
   },
   methods: {
-    /** 查询客服列表列表 */
+    /** 查询商品分类列表 */
     getList() {
       this.loading = true;
-      listService(this.queryParams).then(response => {
-        this.serviceList = response.rows;
+      listArea(this.queryParams).then(response => {
+        this.areaList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -198,14 +235,15 @@ export default {
     reset() {
       this.form = {
         id: null,
-        serviceName: null,
-        serviceLink: null,
-        workTime: null,
+        areaName: null,
+        areaIcon: null,
+        areaBalance: null,
+        levelId: null,
         createTime: null,
         createBy: null,
         updateTime: null,
         updateBy: null,
-        remake: null,
+        remark: null,
         status: null,
         pxh: null
       };
@@ -231,16 +269,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加客服列表";
+      this.title = "添加商品分类";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getService(id).then(response => {
+      getArea(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改客服列表";
+        this.title = "修改商品分类";
       });
     },
     /** 提交按钮 */
@@ -248,13 +286,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateService(this.form).then(response => {
+            updateArea(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addService(this.form).then(response => {
+            addArea(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -266,8 +304,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除客服列表编号为"' + ids + '"的数据项？').then(function() {
-        return delService(ids);
+      this.$modal.confirm('是否确认删除商品分类编号为"' + ids + '"的数据项？').then(function() {
+        return delArea(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -275,13 +313,16 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('business/service/export', {
+      this.download('business/area/export', {
         ...this.queryParams
-      }, `service_${new Date().getTime()}.xlsx`)
+      }, `area_${new Date().getTime()}.xlsx`)
+    },
+    getCookie() {
+      this.resourceDomain = JSON.parse(Cookies.get("config"));
     },
     // 修改冻结状态
     changeStatus(id,status){
-      updateService(
+      updateArea(
         {
           id: id,
           status : status
@@ -289,6 +330,23 @@ export default {
       ).then(response => {
         this.$modal.msgSuccess("修改成功");
       });
+    },
+    beforeUploadHandle (file) {
+      this.formLoading = true
+      if (file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
+        this.$message.error('只支持jpg、png、gif格式的图片！')
+        return false
+      }
+    },
+    // 上传成功
+    successHandle (response, file, fileList) {
+      this.fileList = fileList
+      if (response && response.code === 200) {
+        this.form.levelIcon = response.data.filePath;
+      } else {
+        // this.$message.error(response.msg)
+      }
+      this.formLoading = false
     },
   }
 };

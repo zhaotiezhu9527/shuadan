@@ -9,15 +9,6 @@
       <template v-if="device!=='mobile'">
         <search id="header-search" class="right-menu-item" />
         
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
@@ -43,6 +34,11 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <div>
+      <audio class="success" ref="mp3"
+        src="@/assets/mp3/634.wav">
+      </audio>
+    </div>
   </div>
 </template>
 
@@ -56,6 +52,7 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import RuoYiGit from '@/components/RuoYi/Git'
 import RuoYiDoc from '@/components/RuoYi/Doc'
+import { getNotice } from "@/api/menu";
 
 export default {
   components: {
@@ -91,6 +88,11 @@ export default {
       }
     }
   },
+  created() {
+    // setInterval(() => {
+    //   this.getNotice();
+    // },10000)
+  },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -105,6 +107,13 @@ export default {
           location.href = '/index';
         })
       }).catch(() => {});
+    },
+    getNotice(){
+      getNotice().then(response => {
+        if(response.data){
+            this.$refs.mp3.play()
+        }
+      });
     }
   }
 }

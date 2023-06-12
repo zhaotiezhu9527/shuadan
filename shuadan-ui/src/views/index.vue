@@ -3,70 +3,70 @@
     <div class="title">商城统计</div>
 
     <div class="list-item">
-      <div class="item-bg1">
+      <div class="item-bg1 border-radius5">
         <div class="line-2em">商品总量</div>
         <div class="num">{{dataList.totalGoods}}</div>
-        <div>今日新增商品 <label class="font-blod">{{dataList.todayGoods}}</label></div>
-        <div>昨日新增商品 {{dataList.yesterGoods}}</div>
+        <div>今日商品 <label class="font-blod">{{dataList.todayGoods}}</label></div>
+        <div>昨日商品 {{dataList.yesterGoods}}</div>
         <i class="el-icon-files class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg2">
+      <div class="item-bg2 border-radius5">
         <div class="line-2em">用户总量</div>
         <div class="num">{{dataList.totalUsers}}</div>
-        <div>今日新增用户 <label class="font-blod">{{dataList.todayUsers}}</label></div>
-        <div>昨日新增用户 {{dataList.yesterdayUsers}}</div>
+        <div>今日用户 <label class="font-blod">{{dataList.todayUsers}}</label></div>
+        <div>昨日用户 {{dataList.yesterdayUsers}}</div>
         <i class="el-icon-s-custom class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg3">
+      <div class="item-bg3 border-radius5">
         <div class="line-2em">订单总量</div>
         <div class="num">{{dataList.totalOrders}}</div>
-        <div>今日新增订单 <label class="font-blod">{{dataList.todayOrders}}</label></div>
-        <div>昨日新增订单 {{dataList.yesterdayOrders}}</div>
+        <div>今日订单 <label class="font-blod">{{dataList.todayOrders}}</label></div>
+        <div>昨日订单 {{dataList.yesterdayOrders}}</div>
         <i class="el-icon-reading class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg4">
+      <div class="item-bg4 border-radius5">
         <div class="line-2em">订单总金额</div>
         <div class="num">{{dataList.totalOrderAmounts}}</div>
-        <div>今日新增订单总金额 <label class="font-blod">{{dataList.todayOrderAmounts}}</label></div>
-        <div>昨日新增订单总金额 {{dataList.yesterdayOrderAmounts}}</div>
+        <div>今日订单总金额 <label class="font-blod">{{dataList.todayOrderAmounts}}</label></div>
+        <div>昨日订单总金额 {{dataList.yesterdayOrderAmounts}}</div>
         <i class="el-icon-tickets class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg5">
+      <div class="item-bg5 border-radius5">
         <div class="line-2em">用户充值</div>
         <div class="num">{{dataList.totalDepositAmounts}}</div>
-        <div>今日新增充值 <label class="font-blod">{{dataList.todayDepositAmounts}}</label></div>
-        <div>昨日新增充值 {{dataList.yesterdayDepositAmounts}}</div>
+        <div>今日充值 <label class="font-blod">{{dataList.todayDepositAmounts}}</label></div>
+        <div>昨日充值 {{dataList.yesterdayDepositAmounts}}</div>
         <i class="el-icon-edit-outline class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg6">
+      <div class="item-bg6 border-radius5">
         <div class="line-2em">商品提现</div>
         <div class="num">{{dataList.totalWithdrawAmounts}}</div>
-        <div>今日新增提现 <label class="font-blod">{{dataList.todayWithdrawAmounts}}</label></div>
-        <div>昨日新增提现 {{dataList.yesterdayDepositAmounts}}</div>
+        <div>今日提现 <label class="font-blod">{{dataList.todayWithdrawAmounts}}</label></div>
+        <div>昨日提现 {{dataList.yesterdayWithdrawAmounts}}</div>
         <i class="el-icon-coin class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg7">
+      <div class="item-bg7 border-radius5">
         <div class="line-2em">抢单佣金</div>
         <div class="num">{{dataList.totalCommissionAmounts}}</div>
-        <div>今日新增佣金 <label class="font-blod">{{dataList.todayCommissionAmounts}}</label></div>
-        <div>昨日新增佣金 {{dataList.yesterdayCommissionAmounts}}</div>
+        <div>今日佣金 <label class="font-blod">{{dataList.todayCommissionAmounts}}</label></div>
+        <div>昨日佣金 {{dataList.yesterdayCommissionAmounts}}</div>
         <i class="el-icon-s-marketing class-one"></i>
       </div>
     </div>
     <div class="list-item">
-      <div class="item-bg8">
+      <div class="item-bg8 border-radius5">
         <div class="line-2em">用户总余额</div>
         <div class="num">{{dataList.totalUserBalance}}</div>
         <div>今日利息宝转出 <label class="font-blod">0</label></div>
@@ -138,8 +138,11 @@ export default {
     width: 25%;
     position: relative;
     color: #fff;
-    height: 150px;
     float: left;
+    border-radius: 5px;
+    .border-radius5{
+      border-radius: 5px;
+    }
     .font-blod{
       font-size: 20px;
       font-weight: bold;
