@@ -1,7 +1,9 @@
 package com.juhai.business.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.juhai.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,5 +96,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public int deleteUserById(Long id)
     {
         return userMapper.deleteUserById(id);
+    }
+
+    @Override
+    public User getUserByName(String userName) {
+        return getOne(new LambdaQueryWrapper<User>().eq(User::getUserName, userName));
+    }
+
+    @Override
+    public void updateUserBalance(String userName, BigDecimal balance) throws Exception {
+        int updateUserBalance = userMapper.updateUserBalance(userName, balance);
+        if (updateUserBalance <= 0) {
+            throw new Exception("修改用户余额失败.");
+        }
+    }
+
+    @Override
+    public void batchUpdateReport(List<User> list) throws Exception {
+        int i = userMapper.batchUpdateReport(list);
+        if (i <= 0) {
+            throw new Exception("修改日报表失败");
+        }
     }
 }

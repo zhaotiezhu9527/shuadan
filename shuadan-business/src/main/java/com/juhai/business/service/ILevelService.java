@@ -1,6 +1,9 @@
 package com.juhai.business.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.juhai.business.domain.Goods;
 import com.juhai.business.domain.Level;
 
 /**
@@ -9,7 +12,7 @@ import com.juhai.business.domain.Level;
  * @author zhaotiezhu
  * @date 2023-06-12
  */
-public interface ILevelService 
+public interface ILevelService extends IService<Level>
 {
     /**
      * 查询等级列表

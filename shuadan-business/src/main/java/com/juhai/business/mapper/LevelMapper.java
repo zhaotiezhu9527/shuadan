@@ -1,6 +1,9 @@
 package com.juhai.business.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.juhai.business.domain.Goods;
 import com.juhai.business.domain.Level;
 
 /**
@@ -9,7 +12,7 @@ import com.juhai.business.domain.Level;
  * @author zhaotiezhu
  * @date 2023-06-12
  */
-public interface LevelMapper 
+public interface LevelMapper extends BaseMapper<Level>
 {
     /**
      * 查询等级列表

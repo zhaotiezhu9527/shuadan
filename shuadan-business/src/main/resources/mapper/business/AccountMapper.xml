@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juhai.business.mapper.AccountMapper">
+    
+    <resultMap type="Account" id="AccountResult">
+        <result property="id"    column="id"    />
+        <result property="accountNo"    column="account_no"    />
+        <result property="userName"    column="user_name"    />
+        <result property="optAmount"    column="opt_amount"    />
+        <result property="type"    column="type"    />
+        <result property="optType"    column="opt_type"    />
+        <result property="userAgent"    column="user_agent"    />
+        <result property="userAgentNode"    column="user_agent_node"    />
+        <result property="userAgentLevel"    column="user_agent_level"    />
+        <result property="refNo"    column="ref_no"    />
+        <result property="optTime"    column="opt_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectAccountVo">
+        select id, account_no, user_name, opt_amount, type, opt_type, user_agent, user_agent_node, user_agent_level, ref_no, opt_time, remark from t_account
+    </sql>
+
+    <select id="selectAccountList" parameterType="Account" resultMap="AccountResult">
+        <include refid="selectAccountVo"/>
+        <where>  
+            <if test="accountNo != null  and accountNo != ''"> and account_no = #{accountNo}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="optAmount != null "> and opt_amount = #{optAmount}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="optType != null "> and opt_type = #{optType}</if>
+            <if test="userAgent != null  and userAgent != ''"> and user_agent = #{userAgent}</if>
+            <if test="userAgentNode != null  and userAgentNode != ''"> and user_agent_node = #{userAgentNode}</if>
+            <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
+            <if test="refNo != null  and refNo != ''"> and ref_no = #{refNo}</if>
+            <if test="optTime != null "> and opt_time = #{optTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectAccountById" parameterType="Long" resultMap="AccountResult">
+        <include refid="selectAccountVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAccount" parameterType="Account" useGeneratedKeys="true" keyProperty="id">
+        insert into t_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountNo != null">account_no,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="optAmount != null">opt_amount,</if>
+            <if test="type != null">type,</if>
+            <if test="optType != null">opt_type,</if>
+            <if test="userAgent != null">user_agent,</if>
+            <if test="userAgentNode != null">user_agent_node,</if>
+            <if test="userAgentLevel != null">user_agent_level,</if>
+            <if test="refNo != null">ref_no,</if>
+            <if test="optTime != null">opt_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountNo != null">#{accountNo},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="optAmount != null">#{optAmount},</if>
+            <if test="type != null">#{type},</if>
+            <if test="optType != null">#{optType},</if>
+            <if test="userAgent != null">#{userAgent},</if>
+            <if test="userAgentNode != null">#{userAgentNode},</if>
+            <if test="userAgentLevel != null">#{userAgentLevel},</if>
+            <if test="refNo != null">#{refNo},</if>
+            <if test="optTime != null">#{optTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAccount" parameterType="Account">
+        update t_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountNo != null">account_no = #{accountNo},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="optAmount != null">opt_amount = #{optAmount},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="optType != null">opt_type = #{optType},</if>
+            <if test="userAgent != null">user_agent = #{userAgent},</if>
+            <if test="userAgentNode != null">user_agent_node = #{userAgentNode},</if>
+            <if test="userAgentLevel != null">user_agent_level = #{userAgentLevel},</if>
+            <if test="refNo != null">ref_no = #{refNo},</if>
+            <if test="optTime != null">opt_time = #{optTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAccountById" parameterType="Long">
+        delete from t_account where id = #{id}
+    </delete>
+
+    <delete id="deleteAccountByIds" parameterType="String">
+        delete from t_account where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

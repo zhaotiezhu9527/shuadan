@@ -1,9 +1,11 @@
 package com.juhai.business.mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.juhai.business.domain.User;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 会员列表Mapper接口
@@ -60,4 +62,15 @@ public interface UserMapper extends BaseMapper<User>
      * @return 结果
      */
     public int deleteUserByIds(Long[] ids);
+
+    /**
+     * 修改用户余额
+     * @param userName
+     * @param balance
+     * @return
+     */
+    int updateUserBalance(@Param("userName") String userName, @Param("balance") BigDecimal balance);
+
+
+    int batchUpdateReport(List<User> list);
 }

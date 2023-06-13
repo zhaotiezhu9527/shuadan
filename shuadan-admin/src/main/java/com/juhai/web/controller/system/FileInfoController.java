@@ -125,7 +125,7 @@ public class FileInfoController extends BaseController
 
         FileInfo info = new FileInfo();
         info.setFileName(null);
-        info.setFilePath(fileInfo.getBasePath() + fileInfo.getFilename());
+        info.setFilePath("/" + fileInfo.getBasePath() + fileInfo.getFilename());
         info.setFileFullPath(fileInfo.getUrl());
         info.setCreateTime(new Date());
         fileInfoService.insertFileInfo(info);

@@ -2,11 +2,16 @@ package com.juhai.web.controller.business;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.juhai.business.domain.DayReport;
+import com.juhai.business.domain.Goods;
 import com.juhai.business.domain.User;
+import com.juhai.business.service.IDayReportService;
+import com.juhai.business.service.IGoodsService;
 import com.juhai.business.service.IUserService;
 import com.juhai.common.annotation.Anonymous;
 import com.juhai.common.annotation.Log;
@@ -21,6 +26,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +43,12 @@ public class UserController extends BaseController
 {
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IDayReportService dayReportService;
+
+    @Autowired
+    private IGoodsService goodsService;
 
     /**
      * 查询会员列表列表
@@ -122,10 +135,21 @@ public class UserController extends BaseController
         Date yesterdayEnd = DateUtil.endOfDay(yesterday);
 
         JSONObject object = new JSONObject();
+        List<Goods> goodsList = goodsService.list();
+        long todayGoods = 0;
+        long yesterdayGoods = 0;
+        for (Goods goods : goodsList) {
+            if (DateUtil.isIn(goods.getCreateTime(), todayBegin, todayEnd)) {
+                todayGoods += 1;
+            }
+            if (DateUtil.isIn(goods.getCreateTime(), yesterdayBegin, yesterdayEnd)) {
+                yesterdayGoods += 1;
+            }
+        }
         // 商品
-        object.put("totalGoods", 0);
-        object.put("todayUsers", 0);
-        object.put("yesterdayUsers", 0);
+        object.put("totalGoods", goodsList.size());
+        object.put("todayGoods", todayGoods);
+        object.put("yesterGoods", yesterdayGoods);
         // 用户总量
         long totalUsers = userService.count();
         object.put("totalUsers", totalUsers);
@@ -142,26 +166,56 @@ public class UserController extends BaseController
         }
         object.put("todayUsers", todayUsers);
         object.put("yesterdayUsers", yesterdayUsers);
+
+        // 今日报表
+        List<DayReport> todayReports = dayReportService.list(new LambdaQueryWrapper<DayReport>().eq(DayReport::getToday, DateUtil.formatDate(today)));
+        BigDecimal todayOrderAmounts = new BigDecimal(0);
+        BigDecimal todayDepositAmounts = new BigDecimal(0);
+        BigDecimal todayWithdrawAmounts = new BigDecimal(0);
+        BigDecimal todayCommissionAmounts = new BigDecimal(0);
+        for (DayReport report : todayReports) {
+            todayOrderAmounts = NumberUtil.add(todayOrderAmounts, report.getBet());
+            todayDepositAmounts = NumberUtil.add(todayDepositAmounts, report.getDeposit());
+            todayWithdrawAmounts = NumberUtil.add(todayWithdrawAmounts, report.getWithdraw());
+            todayCommissionAmounts = NumberUtil.add(todayCommissionAmounts, report.getCommission());
+        }
+
+        // 昨日报表
+        List<DayReport> yesterdayReports = dayReportService.list(new LambdaQueryWrapper<DayReport>().eq(DayReport::getToday, DateUtil.formatDate(yesterday)));
+        BigDecimal yesterdayOrderAmounts = new BigDecimal(0);
+        BigDecimal yesterdayDepositAmounts = new BigDecimal(0);
+        BigDecimal yesterdayWithdrawAmounts = new BigDecimal(0);
+        BigDecimal yesterdayCommissionAmounts = new BigDecimal(0);
+        for (DayReport report : yesterdayReports) {
+            yesterdayOrderAmounts = NumberUtil.add(yesterdayOrderAmounts, report.getBet());
+            yesterdayDepositAmounts = NumberUtil.add(yesterdayDepositAmounts, report.getDeposit());
+            yesterdayWithdrawAmounts = NumberUtil.add(yesterdayWithdrawAmounts, report.getWithdraw());
+            yesterdayCommissionAmounts = NumberUtil.add(yesterdayCommissionAmounts, report.getCommission());
+        }
+
+        // 所有报表
+        DayReport dayReport = dayReportService.getOne(new QueryWrapper<DayReport>().select("sum(deposit) as deposit,sum(withdraw) as withdraw,sum(bet) as bet,sum(commission) as commission"));
+
         // 订单总量
         object.put("totalOrders", 0);
         object.put("todayOrders", 0);
         object.put("yesterdayOrders", 0);
         // 订单总金额
-        object.put("totalOrderAmounts", 0);
-        object.put("todayOrderAmounts", 0);
-        object.put("yesterdayOrderAmounts", 0);
+        object.put("totalOrderAmounts", dayReport.getBet());
+        object.put("todayOrderAmounts", todayOrderAmounts);
+        object.put("yesterdayOrderAmounts", yesterdayOrderAmounts);
         // 用户充值
-        object.put("totalDepositAmounts", 0);
-        object.put("todayDepositAmounts", 0);
-        object.put("yesterdayDepositAmounts", 0);
+        object.put("totalDepositAmounts", dayReport.getDeposit());
+        object.put("todayDepositAmounts", todayDepositAmounts);
+        object.put("yesterdayDepositAmounts", yesterdayDepositAmounts);
         // 用户提现
-        object.put("totalWithdrawAmounts", 0);
-        object.put("todayWithdrawAmounts", 0);
-        object.put("yesterdayWithdrawAmounts", 0);
+        object.put("totalWithdrawAmounts", dayReport.getWithdraw());
+        object.put("todayWithdrawAmounts", todayWithdrawAmounts);
+        object.put("yesterdayWithdrawAmounts", yesterdayWithdrawAmounts);
         // 抢单佣金
-        object.put("totalCommissionAmounts", 0);
-        object.put("todayCommissionAmounts", 0);
-        object.put("yesterdayCommissionAmounts", 0);
+        object.put("totalCommissionAmounts", dayReport.getCommission());
+        object.put("todayCommissionAmounts", todayCommissionAmounts);
+        object.put("yesterdayCommissionAmounts", yesterdayCommissionAmounts);
         // 用户总金额
         User totalUserBalance = userService.getOne(new QueryWrapper<User>().select("sum(balance) as balance"));
         object.put("totalUserBalance", totalUserBalance.getBalance());
