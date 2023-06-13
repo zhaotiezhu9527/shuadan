@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="serviceName != null  and serviceName != ''"> and service_name like concat('%', #{serviceName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
         </where>
+        ORDER BY create_time DESC
     </select>
     
     <select id="selectCustomerServiceById" parameterType="Long" resultMap="CustomerServiceResult">
