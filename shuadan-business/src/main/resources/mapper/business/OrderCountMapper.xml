@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.juhai.business.mapper.OrderCountMapper">
+    
+    <resultMap type="OrderCount" id="OrderCountResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="today"    column="today"    />
+        <result property="orderCount"    column="order_count"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectOrderCountVo">
+        select id, user_name, today, order_count, create_time, update_time from t_order_count
+    </sql>
+
+    <select id="selectOrderCountList" parameterType="OrderCount" resultMap="OrderCountResult">
+        <include refid="selectOrderCountVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="today != null "> and today = #{today}</if>
+            <if test="orderCount != null "> and order_count = #{orderCount}</if>
+        </where>
+    </select>
+    
+    <select id="selectOrderCountById" parameterType="Long" resultMap="OrderCountResult">
+        <include refid="selectOrderCountVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertOrderCount" parameterType="OrderCount" useGeneratedKeys="true" keyProperty="id">
+        insert into t_order_count
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="today != null">today,</if>
+            <if test="orderCount != null">order_count,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="today != null">#{today},</if>
+            <if test="orderCount != null">#{orderCount},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrderCount" parameterType="OrderCount">
+        update t_order_count
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="today != null">today = #{today},</if>
+            <if test="orderCount != null">order_count = #{orderCount},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOrderCountById" parameterType="Long">
+        delete from t_order_count where id = #{id}
+    </delete>
+
+    <delete id="deleteOrderCountByIds" parameterType="String">
+        delete from t_order_count where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

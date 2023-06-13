@@ -31,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="shopName != null  and shopName != ''"> and shop_name like concat('%', #{shopName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
         </where>
+        ORDER BY create_time DESC
     </select>
     
     <select id="selectGoodsById" parameterType="Long" resultMap="GoodsResult">

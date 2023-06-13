@@ -48,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="countNum != null "> and count_num = #{countNum}</if>
             <if test="commissionMul != null "> and commission_mul = #{commissionMul}</if>
         </where>
+        ORDER BY order_time DESC
     </select>
     
     <select id="selectOrderById" parameterType="Long" resultMap="OrderResult">

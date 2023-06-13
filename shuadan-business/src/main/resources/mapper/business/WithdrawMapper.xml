@@ -50,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgentNode != null  and userAgentNode != ''"> and user_agent_node = #{userAgentNode}</if>
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
         </where>
+        ORDER BY order_time DESC
     </select>
     
     <select id="selectWithdrawById" parameterType="Long" resultMap="WithdrawResult">

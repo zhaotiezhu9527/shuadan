@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="refNo != null  and refNo != ''"> and ref_no = #{refNo}</if>
             <if test="optTime != null "> and opt_time = #{optTime}</if>
         </where>
+        ORDER BY opt_time DESC
     </select>
     
     <select id="selectAccountById" parameterType="Long" resultMap="AccountResult">

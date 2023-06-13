@@ -36,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
             <if test="orderTime != null "> and order_time = #{orderTime}</if>
         </where>
+        ORDER BY order_time DESC
     </select>
     
     <select id="selectDepositById" parameterType="Long" resultMap="DepositResult">

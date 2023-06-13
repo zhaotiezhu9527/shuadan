@@ -64,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
             <if test="params.beginRegisterTime != null and params.beginRegisterTime != '' and params.endRegisterTime != null and params.endRegisterTime != ''"> and register_time between #{params.beginRegisterTime} and #{params.endRegisterTime}</if>
         </where>
+        ORDER BY register_time DESC
     </select>
     
     <select id="selectUserById" parameterType="Long" resultMap="UserResult">

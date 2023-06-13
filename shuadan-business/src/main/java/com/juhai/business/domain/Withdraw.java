@@ -95,6 +95,8 @@ public class Withdraw extends BaseEntity
     @Excel(name = "代理层级")
     private Long userAgentLevel;
 
+    private String updateBy;
+
     public void setId(Long id) 
     {
         this.id = id;
