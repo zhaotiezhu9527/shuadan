@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.juhai.business.domain.DayReport;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 日报表Mapper接口
@@ -60,4 +61,8 @@ public interface DayReportMapper extends BaseMapper<DayReport>
      * @return 结果
      */
     public int deleteDayReportByIds(Long[] ids);
+
+    int batchInsertOrUpdate(List<DayReport> list);
+
+    int insertOrUpdate(@Param("report") DayReport report);
 }

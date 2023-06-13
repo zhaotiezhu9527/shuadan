@@ -60,4 +60,8 @@ public interface IDayReportService extends IService<DayReport>
      * @return 结果
      */
     public int deleteDayReportById(Long id);
+
+    void batchInsertOrUpdate(List<DayReport> list) throws Exception;
+
+    void insertOrUpdate(DayReport report) throws Exception;
 }

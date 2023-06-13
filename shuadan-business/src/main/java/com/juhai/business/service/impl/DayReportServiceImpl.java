@@ -93,4 +93,20 @@ public class DayReportServiceImpl extends ServiceImpl<DayReportMapper, DayReport
     {
         return dayReportMapper.deleteDayReportById(id);
     }
+
+    @Override
+    public void batchInsertOrUpdate(List<DayReport> list) throws Exception {
+        int i = dayReportMapper.batchInsertOrUpdate(list);
+        if (i <= 0) {
+            throw new Exception("修改日报表失败");
+        }
+    }
+
+    @Override
+    public void insertOrUpdate(DayReport report) throws Exception {
+        int i = dayReportMapper.insertOrUpdate(report);
+        if (i <= 0) {
+            throw new Exception("修改日报表失败");
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.juhai.business.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -60,4 +61,10 @@ public interface IUserService extends IService<User>
      * @return 结果
      */
     public int deleteUserById(Long id);
+
+    User getUserByName(String userName);
+
+    void updateUserBalance(String userName, BigDecimal balance) throws Exception;
+
+    void batchUpdateReport(List<User> list) throws Exception;
 }
