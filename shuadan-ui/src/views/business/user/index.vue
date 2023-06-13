@@ -34,7 +34,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="bankName">
+      <el-form-item label="状态">
         <el-select v-model="queryParams.status" placeholder="请选择">
           <el-option value="" label="全部"></el-option>
           <el-option value="1" label="收入"></el-option>
@@ -176,13 +176,13 @@
       <el-table-column label="层级数" align="center" prop="userAgentLevel" />
       <el-table-column label="注册时间" align="center" prop="registerTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.registerTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.registerTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="注册IP" align="center" prop="registerIp" />
       <el-table-column label="最后登录时间" align="center" prop="lastTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.lastTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.lastTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="最后登录IP" align="center" prop="lastIp" />
@@ -222,7 +222,7 @@
     />
 
     <!-- 添加或修改会员列表对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入用户名" />
@@ -566,7 +566,7 @@ export default {
       let end = new Date();
       let start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      this.dateRange[0] = dateFormat("YYYY-mm-dd" , start) + ' 00:00:00'
+      this.dateRange[0] = dateFormat("YYYY-mm-dd" , end) + ' 00:00:00'
       this.dateRange[1] = dateFormat("YYYY-mm-dd" , end) + ' 23:59:59'
     }
   }
