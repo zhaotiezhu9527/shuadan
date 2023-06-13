@@ -17,7 +17,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态">
+      <el-form-item label="交易状态">
         <el-select v-model="queryParams.status" placeholder="请选择">
           <el-option value="" label="全部"></el-option>
           <el-option value="0" label="待支付"></el-option>
@@ -91,7 +91,7 @@
 
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" width="60"/>
       <el-table-column label="订单号" align="center" prop="orderNo" />
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="昵称" align="center" prop="nickName" />
@@ -293,7 +293,7 @@ export default {
     /** 查询订单列表列表 */
     getList() {
       this.loading = true;
-      listOrder(this.queryParams).then(response => {
+      listOrder(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.orderList = response.rows;
         this.total = response.total;
         this.loading = false;
