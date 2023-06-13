@@ -161,6 +161,20 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
+  },
+  {
+    path: '/trade/prepare-edit/',
+    component: Layout,
+    hidden: true,
+    permissions: ['business:prepare:edit'],
+    children: [
+      {
+        path: 'index/:tableId(\\d+)',
+        component: () => import('@/views/business/prepare/prepareEdit'),
+        name: 'prepareEdit',
+        meta: { title: '修改生成配置', activeMenu: '/trade/prepare' }
+      }
+    ]
   }
 ]
 

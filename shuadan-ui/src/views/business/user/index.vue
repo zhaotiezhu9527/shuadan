@@ -10,14 +10,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="昵称" prop="nickName">
-        <el-input
-          v-model="queryParams.nickName"
-          placeholder="请输入昵称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="真实姓名" prop="realName">
         <el-input
           v-model="queryParams.realName"
@@ -40,38 +32,6 @@
           <el-option value="1" label="收入"></el-option>
           <el-option value="2" label="支出"></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="银行卡号" prop="bankNo">
-        <el-input
-          v-model="queryParams.bankNo"
-          placeholder="请输入银行卡号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户等级" prop="levelId">
-        <el-input
-          v-model="queryParams.levelId"
-          placeholder="请输入用户等级"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="邀请码" prop="inviteCode">
-        <el-input
-          v-model="queryParams.inviteCode"
-          placeholder="请输入邀请码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="上级代理" prop="userAgent">
-        <el-input
-          v-model="queryParams.userAgent"
-          placeholder="请输入上级代理"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item label="注册时间" prop="registerTime">
         <el-date-picker
@@ -139,11 +99,47 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" width="65"/>
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="昵称" align="center" prop="nickName" />
+      <el-table-column label="真实姓名" align="center" prop="realName" />
       <el-table-column label="用户余额" align="center" prop="balance" />
       <el-table-column label="冻结金额" align="center" prop="freezeBalance" />
+      <el-table-column label="手机号" align="center" prop="phone" />
+      <el-table-column label="银行信息" align="center" prop="bankName" width="200">
+        <template slot-scope="scope">
+          <div>{{scope.row.bankName}}</div>
+          <div>{{scope.row.bankNo}}</div>
+          <div>{{scope.row.bankAddr}}</div>
+        </template>
+      </el-table-column>
+      
+      <el-table-column label="上级代理" align="center" prop="userAgent">
+        <template slot-scope="scope">
+          <div class="blue-text" @click="handleUserAgent(scope.row.userAgent)">{{scope.row.userAgent}}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="邀请码" align="center" prop="inviteCode" />
+      <el-table-column align="center" width="180">
+        <template slot="header">
+          <div>注册时间</div>
+          <div>上次登陆时间</div>
+        </template>
+        <template slot-scope="scope">
+          <div>{{ scope.row.registerTime }}</div>
+          <div>{{ scope.row.lastTime }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" width="180">
+        <template slot="header">
+          <div>注册IP</div>
+          <div>上次登陆IP</div>
+        </template>
+        <template slot-scope="scope">
+          <div>{{ scope.row.registerIp }}</div>
+          <div>{{ scope.row.lastIp }}</div>
+        </template>
+      </el-table-column>
       <!-- <el-table-column label="登录密码" align="center" prop="loginPwd" /> -->
       <!-- <el-table-column label="支付密码" align="center" prop="payPwd" /> -->
       <el-table-column label="状态" align="center" prop="status">
@@ -158,42 +154,19 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="真实姓名" align="center" prop="realName" />
-      <el-table-column label="手机号" align="center" prop="phone" />
-      <el-table-column label="银行信息" align="center" prop="bankName" width="200">
-        <template slot-scope="scope">
-          <div>{{scope.row.bankName}}</div>
-          <div>{{scope.row.bankNo}}</div>
-          <div>{{scope.row.bankAddr}}</div>
-        </template>
+      <!-- <el-table-column label="信用分" align="center" prop="creditValue" /> -->
+      <!-- <el-table-column label="用户等级" align="center" prop="levelId" /> -->
+      <!-- <el-table-column label="是否累加订单(0:是 1:否)" align="center" prop="updateOrder" /> -->
+      <el-table-column label="详情" align="center" width="200">
+          <template slot-scope="scope">
+            <div>总充值：{{ scope.row.deposit }}</div>
+            <div>总提现：{{ scope.row.withdraw }}</div>
+            <div>总收益：{{ scope.row.income }}</div>
+            <div>总投注：{{ scope.row.bet }}</div>
+            <div>下级人数：{{ scope.row.inviteCount }}</div>
+          </template>
       </el-table-column>
-      <el-table-column label="信用分" align="center" prop="creditValue" />
-      <el-table-column label="用户等级" align="center" prop="levelId" />
-      <el-table-column label="头像ID" align="center" prop="avatarId" />
-      <el-table-column label="邀请码" align="center" prop="inviteCode" />
-      <el-table-column label="上级代理" align="center" prop="userAgent" />
-      <el-table-column label="代理节点数" align="center" prop="userAgentNode" />
-      <el-table-column label="层级数" align="center" prop="userAgentLevel" />
-      <el-table-column label="注册时间" align="center" prop="registerTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.registerTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="注册IP" align="center" prop="registerIp" />
-      <el-table-column label="最后登录时间" align="center" prop="lastTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.lastTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="最后登录IP" align="center" prop="lastIp" />
-      <el-table-column label="备注" align="center" prop="remake" />
-      <el-table-column label="是否累加订单(0:是 1:否)" align="center" prop="updateOrder" />
-      <el-table-column label="总充值" align="center" prop="deposit" />
-      <el-table-column label="总提现" align="center" prop="withdraw" />
-      <el-table-column label="总收益" align="center" prop="income" />
-      <el-table-column label="总投注" align="center" prop="bet" />
-      <el-table-column label="推荐人数" align="center" prop="inviteCount" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -223,24 +196,21 @@
 
     <!-- 添加或修改会员列表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入用户名" />
+          <el-input :disabled="true" v-model="form.userName" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item label="昵称" prop="nickName">
           <el-input v-model="form.nickName" placeholder="请输入昵称" />
         </el-form-item>
-        <el-form-item label="用户余额" prop="balance">
+        <!-- <el-form-item label="用户余额" prop="balance">
           <el-input v-model="form.balance" placeholder="请输入用户余额" />
+        </el-form-item> -->
+        <el-form-item label="登录密码">
+          <el-input v-model="form.loginPwd" placeholder="不输入表示不修改" />
         </el-form-item>
-        <el-form-item label="冻结金额" prop="freezeBalance">
-          <el-input v-model="form.freezeBalance" placeholder="请输入冻结金额" />
-        </el-form-item>
-        <el-form-item label="登录密码" prop="loginPwd">
-          <el-input v-model="form.loginPwd" placeholder="请输入登录密码" />
-        </el-form-item>
-        <el-form-item label="支付密码" prop="payPwd">
-          <el-input v-model="form.payPwd" placeholder="请输入支付密码" />
+        <el-form-item label="支付密码">
+          <el-input v-model="form.payPwd" placeholder="不输入表示不修改" />
         </el-form-item>
         <el-form-item label="真实姓名" prop="realName">
           <el-input v-model="form.realName" placeholder="请输入真实姓名" />
@@ -261,70 +231,49 @@
           <el-input v-model="form.creditValue" placeholder="请输入信用分" />
         </el-form-item>
         <el-form-item label="用户等级" prop="levelId">
-          <el-input v-model="form.levelId" placeholder="请输入用户等级" />
-        </el-form-item>
-        <el-form-item label="头像ID" prop="avatarId">
-          <el-input v-model="form.avatarId" placeholder="请输入头像ID" />
-        </el-form-item>
-        <el-form-item label="邀请码" prop="inviteCode">
-          <el-input v-model="form.inviteCode" placeholder="请输入邀请码" />
-        </el-form-item>
-        <el-form-item label="上级代理" prop="userAgent">
-          <el-input v-model="form.userAgent" placeholder="请输入上级代理" />
-        </el-form-item>
-        <el-form-item label="代理节点数" prop="userAgentNode">
-          <el-input v-model="form.userAgentNode" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="层级数" prop="userAgentLevel">
-          <el-input v-model="form.userAgentLevel" placeholder="请输入层级数" />
-        </el-form-item>
-        <el-form-item label="注册时间" prop="registerTime">
-          <el-date-picker clearable
-            v-model="form.registerTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择注册时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="注册IP" prop="registerIp">
-          <el-input v-model="form.registerIp" placeholder="请输入注册IP" />
-        </el-form-item>
-        <el-form-item label="最后登录时间" prop="lastTime">
-          <el-date-picker clearable
-            v-model="form.lastTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择最后登录时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="最后登录IP" prop="lastIp">
-          <el-input v-model="form.lastIp" placeholder="请输入最后登录IP" />
+          <el-select v-model="form.levelId" placeholder="请选择">
+          <el-option
+              v-for="item in levelList"
+              :key="item.id"
+              :label="item.levelName"
+              :value="item.id">
+            </el-option>
+        </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remake">
           <el-input v-model="form.remake" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="是否累加订单(0:是 1:否)" prop="updateOrder">
+        <!-- <el-form-item label="是否累加订单(0:是 1:否)" prop="updateOrder">
           <el-input v-model="form.updateOrder" placeholder="请输入是否累加订单(0:是 1:否)" />
-        </el-form-item>
-        <el-form-item label="总充值" prop="deposit">
-          <el-input v-model="form.deposit" placeholder="请输入总充值" />
-        </el-form-item>
-        <el-form-item label="总提现" prop="withdraw">
-          <el-input v-model="form.withdraw" placeholder="请输入总提现" />
-        </el-form-item>
-        <el-form-item label="总收益" prop="income">
-          <el-input v-model="form.income" placeholder="请输入总收益" />
-        </el-form-item>
-        <el-form-item label="总投注" prop="bet">
-          <el-input v-model="form.bet" placeholder="请输入总投注" />
-        </el-form-item>
-        <el-form-item label="推荐人数" prop="inviteCount">
-          <el-input v-model="form.inviteCount" placeholder="请输入推荐人数" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 添加对话框 -->
+    <el-dialog title="添加会员" :visible.sync="addOpen" width="600px" append-to-body>
+      <el-form ref="addform" :model="addForm" :rules="rules" label-width="120px">
+        <el-form-item label="代理用户名">
+          <el-input v-model="addForm.userAgent" placeholder="请输入推荐人用户名" />
+        </el-form-item>
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="addForm.userName" placeholder="请输入4-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="昵称" prop="nickName">
+          <el-input v-model="addForm.nickName" placeholder="请输入4-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="密码" prop="loginPwd">
+          <el-input v-model="addForm.loginPwd" placeholder="请输入6-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="支付密码" prop="payPwd">
+          <el-input v-model="addForm.payPwd" placeholder="请输入6位数字" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addSub">确 定</el-button>
+        <el-button @click="addCancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -332,6 +281,7 @@
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser } from "@/api/business/user";
+import { listLevel } from "@/api/business/level";
 import { dateFormat } from '@/utils/auth'
 
 export default {
@@ -363,16 +313,9 @@ export default {
         pageNum: 1,
         pageSize: 10,
         userName: null,
-        nickName: null,
         status: null,
         realName: null,
         phone: null,
-        bankNo: null,
-        levelId: null,
-        inviteCode: null,
-        userAgent: null,
-        userAgentNode: null,
-        registerTime: null,
         status: '',
       },
       // 表单参数
@@ -384,6 +327,12 @@ export default {
         ],
         loginPwd: [
           { required: true, message: "登录密码不能为空", trigger: "blur" }
+        ],
+        nickName: [
+          { required: true, message: "昵称不能为空", trigger: "blur" }
+        ],
+        payPwd: [
+          { required: true, message: "支付密码不能为空", trigger: "blur" }
         ],
       },
       // 时间
@@ -415,11 +364,17 @@ export default {
           }
         }]
       },
+      // 是否显示添加弹出层
+      addOpen: false,
+      // 表单参数
+      addForm: {},
+      levelList: [],//等级列表
     };
   },
   created() {
     this.getDefaultTime()
     this.getList();
+    this.getLevelList()
   },
   methods: {
     /** 查询会员列表列表 */
@@ -511,6 +466,8 @@ export default {
       const id = row.id || this.ids
       getUser(id).then(response => {
         this.form = response.data;
+        this.form.loginPwd = ''
+        this.form.payPwd = ''
         this.open = true;
         this.title = "修改会员列表";
       });
@@ -568,7 +525,54 @@ export default {
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.dateRange[0] = dateFormat("YYYY-mm-dd" , end) + ' 00:00:00'
       this.dateRange[1] = dateFormat("YYYY-mm-dd" , end) + ' 23:59:59'
-    }
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.addOpen = true;
+    },
+    addSub(){
+      this.$refs["addform"].validate(valid => {
+        if (valid) {
+          addUser(this.addForm).then(response => {
+            this.$modal.msgSuccess("新增成功");
+            this.addOpen = false;
+            this.getList();
+          });
+        }
+      });
+    },
+    // 添加取消按钮
+    addCancel() {
+      this.addOpen = false;
+      this.adReset();
+    },
+    // 表单重置
+    addReset() {
+      this.form = {
+        userName: null,
+        userAgent: null,
+        loginPwd: null,
+        payPwd: null,
+      };
+      this.resetForm("addform");
+    },
+    handleUserAgent(username){
+      if(username === 'root'){
+        return false
+      }
+      this.queryParams.userName = username
+      this.getList()
+    },
+    // 等级
+    getLevelList() {
+      listLevel({
+        pageNum: 1,
+        pageSize: 1000,
+      }).then(response => {
+        this.levelList = response.rows;
+      });
+    },
   }
 };
 </script>

@@ -206,3 +206,18 @@ aside {
 .list-img-class{
   width: 100px;
 }
+.prepare-title{
+  width: 100%;
+  .prepare-title-btn{
+    background-color: #409EFF;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 12px;
+    float: left;
+  }
+}
+.blue-text{
+  color: rgb(32, 160, 255);
+  cursor: pointer;
+} 

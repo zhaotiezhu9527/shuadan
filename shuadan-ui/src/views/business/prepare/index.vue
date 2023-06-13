@@ -140,12 +140,6 @@
         <el-form-item label="佣金倍数" prop="commissionMul">
           <el-input v-model="form.commissionMul" placeholder="请输入佣金倍数" />
         </el-form-item>
-        <el-form-item label="订单总额" prop="orderAmount">
-          <el-input v-model="form.orderAmount" placeholder="请输入订单总额" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -281,11 +275,14 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getPrepare(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改预派送列表";
-      });
+      // getPrepare(id).then(response => {
+      //   this.form = response.data;
+      //   this.open = true;
+      //   this.title = "修改预派送列表";
+      // });
+      const tableId = row.id || this.ids;
+      const params = { pageNum: this.queryParams.pageNum };
+      this.$tab.openPage("编辑预派送", '/trade/prepare-edit/index/' + tableId, params);
     },
     /** 提交按钮 */
     submitForm() {
