@@ -141,8 +141,15 @@
         <el-form-item label="专区金额" prop="areaBalance">
           <el-input v-model="form.areaBalance" placeholder="请输入专区金额" />
         </el-form-item>
-        <el-form-item label="等级ID" prop="levelId">
-          <el-input v-model="form.levelId" placeholder="请输入等级ID" />
+        <el-form-item label="等级" prop="levelId">
+          <el-select v-model="form.levelId" placeholder="请选择">
+            <el-option
+              v-for="item in levelList"
+              :key="item.id"
+              :label="item.levelName"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -161,6 +168,7 @@
 
 <script>
 import { listArea, getArea, delArea, addArea, updateArea } from "@/api/business/area";
+import { listLevel } from "@/api/business/level";
 import { getToken } from "@/utils/auth";
 import Cookies from "js-cookie";
 
@@ -210,11 +218,18 @@ export default {
         // 上传的文件列表
         fileList: []
       },
+      // 查询参数
+      selectParams: {
+        pageNum: 1,
+        pageSize: 1000,
+      },
+      levelList: [],//等级数据
     };
   },
   created() {
     this.getList();
     this.getCookie()
+    this.getLevel()
   },
   methods: {
     /** 查询商品分类列表 */
@@ -342,11 +357,18 @@ export default {
     successHandle (response, file, fileList) {
       this.fileList = fileList
       if (response && response.code === 200) {
-        this.form.levelIcon = response.data.filePath;
+        this.form.areaIcon = response.data.filePath;
       } else {
         // this.$message.error(response.msg)
       }
       this.formLoading = false
+    },
+    getLevel() {
+      this.loading = true;
+      listLevel(this.selectParams).then(response => {
+        this.levelList = response.rows;
+        this.loading = false;
+      });
     },
   }
 };

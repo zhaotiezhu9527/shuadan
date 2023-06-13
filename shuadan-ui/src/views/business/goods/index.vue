@@ -84,7 +84,7 @@
           <img class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.goodsImg" />
         </template>
       </el-table-column>
-      <el-table-column label="专区ID" align="center" prop="area.areaName" />
+      <el-table-column label="专区名称" align="center" prop="area.areaName" />
       <el-table-column label="店铺名称" align="center" prop="shopName" />
       <!-- <el-table-column label="商品详情" align="center" prop="goodsDetail" /> -->
       <el-table-column label="备注" align="center" prop="remark" />
@@ -234,7 +234,7 @@ export default {
       // 查询参数
       selectParams: {
         pageNum: 1,
-        pageSize: 100,
+        pageSize: 1000,
       },
       areaList: [],//分类数据
     };
@@ -360,7 +360,7 @@ export default {
     successHandle (response, file, fileList) {
       this.fileList = fileList
       if (response && response.code === 200) {
-        this.form.levelIcon = response.data.filePath;
+        this.form.goodsImg = response.data.filePath;
       } else {
         // this.$message.error(response.msg)
       }
