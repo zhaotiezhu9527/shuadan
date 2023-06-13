@@ -402,11 +402,8 @@ export default {
         id: null,
         userName: null,
         nickName: null,
-        balance: null,
-        freezeBalance: null,
         loginPwd: null,
         payPwd: null,
-        status: null,
         realName: null,
         phone: null,
         bankName: null,
@@ -414,26 +411,8 @@ export default {
         bankAddr: null,
         creditValue: null,
         levelId: null,
-        avatarId: null,
-        inviteCode: null,
-        userAgent: null,
-        userAgentNode: null,
-        userAgentLevel: null,
-        registerTime: null,
-        registerIp: null,
-        lastTime: null,
-        lastIp: null,
-        createTime: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null,
         remake: null,
-        updateOrder: null,
-        deposit: null,
-        withdraw: null,
-        income: null,
-        bet: null,
-        inviteCount: null
+        // updateOrder: null,
       };
       this.resetForm("form");
     },
@@ -474,16 +453,31 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      let obj = {
+        id: this.form.id,
+        userName: this.form.userName,
+        nickName: this.form.nickName,
+        loginPwd: this.form.loginPwd,
+        payPwd: this.form.payPwd,
+        realName: this.form.realName,
+        phone: this.form.phone,
+        bankName: this.form.bankName,
+        bankNo: this.form.bankNo,
+        bankAddr: this.form.bankAddr,
+        creditValue: this.form.creditValue,
+        levelId: this.form.levelId,
+        remake: this.form.remake,
+      }
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateUser(this.form).then(response => {
+            updateUser(obj).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addUser(this.form).then(response => {
+            addUser(obj).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
