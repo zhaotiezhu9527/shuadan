@@ -1,15 +1,18 @@
 package com.juhai.business.domain;
 
-import java.math.BigDecimal;
-
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.juhai.common.annotation.Excel;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.juhai.common.core.domain.BaseEntity;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 预派送列表对象 t_prepare
@@ -19,7 +22,7 @@ import com.juhai.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value ="t_prepare")
-public class Prepare extends BaseEntity
+public class Prepare
 {
     private static final long serialVersionUID = 1L;
 
@@ -34,6 +37,18 @@ public class Prepare extends BaseEntity
     /** 触发单数 */
     @Excel(name = "触发单数")
     private Long triggerNum;
+
+    /** 商品id */
+    @Excel(name = "商品id")
+    private Long goodsId;
+
+    /** 商品数量 */
+    @Excel(name = "商品数量")
+    private Long goodsCount;
+
+    /** 批次 */
+    @Excel(name = "批次")
+    private String preBatch;
 
     /** 提示文本 */
     @Excel(name = "提示文本")
@@ -51,85 +66,30 @@ public class Prepare extends BaseEntity
     @Excel(name = "状态(0:未完成 1:已完成)")
     private Long status;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
+    /** 搜索值 */
+    @JsonIgnore
+    @TableField(exist = false)
+    private String searchValue;
 
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setUserName(String userName) 
-    {
-        this.userName = userName;
-    }
+    /** 创建者 */
+    private String createBy;
 
-    public String getUserName() 
-    {
-        return userName;
-    }
-    public void setTriggerNum(Long triggerNum) 
-    {
-        this.triggerNum = triggerNum;
-    }
+    /** 创建时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
-    public Long getTriggerNum() 
-    {
-        return triggerNum;
-    }
-    public void setPromptText(String promptText) 
-    {
-        this.promptText = promptText;
-    }
+    /** 更新者 */
+    private String updateBy;
 
-    public String getPromptText() 
-    {
-        return promptText;
-    }
-    public void setCommissionMul(Long commissionMul) 
-    {
-        this.commissionMul = commissionMul;
-    }
+    /** 更新时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;
 
-    public Long getCommissionMul() 
-    {
-        return commissionMul;
-    }
-    public void setOrderAmount(BigDecimal orderAmount) 
-    {
-        this.orderAmount = orderAmount;
-    }
+    /** 备注 */
+    private String remark;
 
-    public BigDecimal getOrderAmount() 
-    {
-        return orderAmount;
-    }
-    public void setStatus(Long status) 
-    {
-        this.status = status;
-    }
-
-    public Long getStatus() 
-    {
-        return status;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("userName", getUserName())
-            .append("triggerNum", getTriggerNum())
-            .append("promptText", getPromptText())
-            .append("commissionMul", getCommissionMul())
-            .append("orderAmount", getOrderAmount())
-            .append("status", getStatus())
-            .append("createTime", getCreateTime())
-            .append("createBy", getCreateBy())
-            .append("updateTime", getUpdateTime())
-            .append("updateBy", getUpdateBy())
-            .append("remark", getRemark())
-            .toString();
-    }
+    /** 请求参数 */
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<String, Object> params;
 }
