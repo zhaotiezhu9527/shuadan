@@ -17,109 +17,25 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="昵称" prop="nickName">
-        <el-input
-          v-model="queryParams.nickName"
-          placeholder="请输入昵称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="商品ID" prop="goodsId">
-        <el-input
-          v-model="queryParams.goodsId"
-          placeholder="请输入商品ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="商品价格" prop="goodsPrice">
-        <el-input
-          v-model="queryParams.goodsPrice"
-          placeholder="请输入商品价格"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="商品数量" prop="goodsCount">
-        <el-input
-          v-model="queryParams.goodsCount"
-          placeholder="请输入商品数量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="订单金额" prop="orderAmount">
-        <el-input
-          v-model="queryParams.orderAmount"
-          placeholder="请输入订单金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="佣金" prop="commission">
-        <el-input
-          v-model="queryParams.commission"
-          placeholder="请输入佣金"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="佣金比例" prop="commissionRate">
-        <el-input
-          v-model="queryParams.commissionRate"
-          placeholder="请输入佣金比例"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="状态">
+        <el-select v-model="queryParams.status" placeholder="请选择">
+          <el-option value="" label="全部"></el-option>
+          <el-option value="0" label="待支付"></el-option>
+          <el-option value="1" label="已完成"></el-option>
+          <el-option value="2" label="冻结中"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="订单时间" prop="orderTime">
-        <el-date-picker clearable
-          v-model="queryParams.orderTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择订单时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="支付时间" prop="payTime">
-        <el-date-picker clearable
-          v-model="queryParams.payTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择支付时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="预派送ID" prop="preId">
-        <el-input
-          v-model="queryParams.preId"
-          placeholder="请输入预派送ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="预派送详情ID" prop="preDetailId">
-        <el-input
-          v-model="queryParams.preDetailId"
-          placeholder="请输入预派送详情ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="今日第几单" prop="countNum">
-        <el-input
-          v-model="queryParams.countNum"
-          placeholder="请输入今日第几单"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="佣金倍数" prop="commissionMul">
-        <el-input
-          v-model="queryParams.commissionMul"
-          placeholder="请输入佣金倍数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-date-picker
+          v-model="dateRange"
+          style="width: 340px"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -179,27 +95,24 @@
       <el-table-column label="订单号" align="center" prop="orderNo" />
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="昵称" align="center" prop="nickName" />
-      <el-table-column label="商品ID" align="center" prop="goodsId" />
       <el-table-column label="商品价格" align="center" prop="goodsPrice" />
-      <el-table-column label="商品数量" align="center" prop="goodsCount" />
-      <el-table-column label="订单金额" align="center" prop="orderAmount" />
+      <el-table-column label="交易数量" align="center" prop="goodsCount" />
+      <el-table-column label="交易金额" align="center" prop="orderAmount" />
       <el-table-column label="佣金" align="center" prop="commission" />
-      <el-table-column label="佣金比例" align="center" prop="commissionRate" />
-      <el-table-column label="状态(0:待处理 1:已完成 2:冻结中)" align="center" prop="status" />
-      <el-table-column label="订单时间" align="center" prop="orderTime" width="180">
+      <el-table-column label="交易状态" align="center" prop="status">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.orderTime, '{y}-{m}-{d}') }}</span>
+          <div v-if="scope.row.status === 0">待支付</div>
+          <div v-else-if="scope.row.status === 1">已完成</div>
+          <div v-else-if="scope.row.status === 2">冻结中</div>
+          <div v-else> - </div>
         </template>
       </el-table-column>
-      <el-table-column label="支付时间" align="center" prop="payTime" width="180">
+      <el-table-column label="下单时间" align="center" prop="orderTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.payTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.orderTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="预派送ID" align="center" prop="preId" />
-      <el-table-column label="预派送详情ID" align="center" prop="preDetailId" />
       <el-table-column label="今日第几单" align="center" prop="countNum" />
-      <el-table-column label="佣金倍数" align="center" prop="commissionMul" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -297,6 +210,7 @@
 
 <script>
 import { listOrder, getOrder, delOrder, addOrder, updateOrder } from "@/api/business/order";
+import { dateFormat } from '@/utils/auth'
 
 export default {
   name: "Order",
@@ -326,20 +240,8 @@ export default {
         pageSize: 10,
         orderNo: null,
         userName: null,
-        nickName: null,
-        goodsId: null,
-        goodsPrice: null,
-        goodsCount: null,
-        orderAmount: null,
-        commission: null,
-        commissionRate: null,
-        status: null,
+        status: "",
         orderTime: null,
-        payTime: null,
-        preId: null,
-        preDetailId: null,
-        countNum: null,
-        commissionMul: null
       },
       // 表单参数
       form: {},
@@ -351,11 +253,41 @@ export default {
         userName: [
           { required: true, message: "用户名不能为空", trigger: "blur" }
         ],
-      }
+      },
+      // 时间
+      dateRange:[],
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
     };
   },
   created() {
     this.getList();
+    this.getDefaultTime()
   },
   methods: {
     /** 查询订单列表列表 */
@@ -379,9 +311,6 @@ export default {
         orderNo: null,
         userName: null,
         nickName: null,
-        goodsId: null,
-        goodsPrice: null,
-        goodsCount: null,
         orderAmount: null,
         commission: null,
         commissionRate: null,
@@ -462,6 +391,13 @@ export default {
       this.download('business/order/export', {
         ...this.queryParams
       }, `order_${new Date().getTime()}.xlsx`)
+    },
+    getDefaultTime() {
+      let end = new Date();
+      let start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      this.dateRange[0] = dateFormat("YYYY-mm-dd" , end) + ' 00:00:00'
+      this.dateRange[1] = dateFormat("YYYY-mm-dd" , end) + ' 23:59:59'
     }
   }
 };
