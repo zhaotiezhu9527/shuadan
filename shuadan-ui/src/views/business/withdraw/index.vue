@@ -104,10 +104,14 @@
       <el-table-column label="订单号" align="center" prop="orderNo" />
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="提现金额" align="center" prop="optAmount" />
-      <el-table-column label="手续费" align="center" prop="feeRate" />
+      <el-table-column label="手续费" align="center" prop="feeRate">
+        <template slot-scope="scope">
+          <div>{{scope.row.feeRate}}%</div>
+        </template>
+      </el-table-column>
       <el-table-column label="实际到账" align="center" prop="realAmount" />
       <el-table-column label="银行信息" align="center" prop="bankName" width="180">
-      <template slot-scope="scope">
+        <template slot-scope="scope">
           <div>{{scope.row.realName}}</div>
           <div>{{scope.row.bankName}}</div>
           <div>{{scope.row.bankNo}}</div>
@@ -133,9 +137,15 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="上级代理" align="center" prop="userAgent" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleCheck(scope.row.id)"
+            v-hasPermi="['business:withdraw:check']"
+            v-if="scope.row.status === 0"
+          >审核</el-button>
           <el-button
             size="mini"
             type="text"
@@ -229,11 +239,29 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 提现审核 -->
+    <el-dialog title="提交审核" :visible.sync="examineOpen" width="500px" append-to-body>
+      <el-form ref="examineform" :model="examineForm" :rules="rules" label-width="80px">
+        <el-form-item label="审核" prop="status">
+          <el-select v-model="examineForm.status" placeholder="请选择审核状态">
+            <el-option label="通过" :value="1"></el-option>
+            <el-option label="拒绝" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="examineForm.remark" placeholder="请输入审核备注描述，没有可不填" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="examineSub">确 定</el-button>
+        <el-button @click="examineOpen = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listWithdraw, getWithdraw, delWithdraw, addWithdraw, updateWithdraw } from "@/api/business/withdraw";
+import { listWithdraw, getWithdraw, delWithdraw, addWithdraw, updateWithdraw, examineWithdraw } from "@/api/business/withdraw";
 import { dateFormat } from '@/utils/auth'
 
 export default {
@@ -302,6 +330,9 @@ export default {
           }
         }]
       },
+      listId: "",//操作id
+      examineOpen: false,//审核状态
+      examineForm: {},//审核提交数据
     };
   },
   created() {
@@ -422,6 +453,24 @@ export default {
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.dateRange[0] = dateFormat("YYYY-mm-dd" , end) + ' 00:00:00'
       this.dateRange[1] = dateFormat("YYYY-mm-dd" , end) + ' 23:59:59'
+    },
+    // 提现审核
+    handleCheck(id){
+      this.listId = id
+      this.examineForm.id = id
+      this.examineOpen = true
+    },
+    // 审核提交
+    examineSub(){
+      this.$refs["examineform"].validate(valid => {
+        if (valid) {
+          examineWithdraw(this.examineForm).then(response => {
+            this.$modal.msgSuccess("操作成功");
+            this.examineOpen = false;
+            this.getList();
+          });
+        }
+      });
     }
   }
 };
