@@ -42,3 +42,21 @@ export function delUser(id) {
     method: 'delete'
   })
 }
+
+// 重置余额
+export function resetBalance(data) {
+  return request({
+    url: '/business/user/resetBalance',
+    method: 'post',
+    data: data
+  })
+}
+
+// 增减余额
+export function balanceUser(data) {
+  return request({
+    url: '/business/user/optMoney',
+    method: 'post',
+    data: data
+  })
+}

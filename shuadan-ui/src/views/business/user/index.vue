@@ -178,10 +178,24 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-edit"
+            @click="balanceUpdate(scope.row)"
+            v-hasPermi="['business:user:optMoney']"
+          >余额重置</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleBalance(scope.row)"
+            v-hasPermi="['business:user:optMoney']"
+          >上下分</el-button>
+          <!-- <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:user:remove']"
-          >删除</el-button>
+          >删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -276,11 +290,50 @@
         <el-button @click="addCancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 修改余额对话框 -->
+    <el-dialog title="重置余额" :visible.sync="resetBalanceStatus" width="500px" append-to-body>
+      <el-form ref="resetBalanceForm" :model="resetBalanceForm" :rules="rules" label-width="120px">
+        <el-form-item label="用户名">
+          <el-input :disabled="true" v-model="resetBalanceForm.userName" placeholder="请输入4-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="修改后余额" prop="balance">
+          <el-input v-model="resetBalanceForm.balance" placeholder="请输入金额" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="balanceUpdateSub">确 定</el-button>
+        <el-button @click="resetBalanceForm = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 增减余额对话框 -->
+    <el-dialog title="增减余额" :visible.sync="balanceOpen" width="500px" append-to-body>
+      <el-form ref="balanceform" :model="balanceForm" :rules="rules" label-width="80px">
+        <el-form-item label="用户名" prop="userName">
+          <el-input :disabled="true" v-model="balanceForm.userName" placeholder="请输入4-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="金额" prop="money">
+          <el-input v-model="balanceForm.money" placeholder="请输入金额" />
+        </el-form-item>
+        <el-form-item label="增减类型" prop="type">
+          <el-select v-model="balanceForm.type" placeholder="请选择上下分类型">
+            <el-option label="上分" :value="1"></el-option>
+            <el-option label="下分" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="修改理由" prop="remark">
+          <el-input v-model="balanceForm.remark" placeholder="请填写备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="balanceSub">确 定</el-button>
+        <el-button @click="balanceCancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser } from "@/api/business/user";
+import { listUser, getUser, delUser, addUser, updateUser ,resetBalance, balanceUser} from "@/api/business/user";
 import { listLevel } from "@/api/business/level";
 import { dateFormat } from '@/utils/auth'
 
@@ -369,6 +422,18 @@ export default {
       // 表单参数
       addForm: {},
       levelList: [],//等级列表
+      resetBalanceStatus: false,//重置余额弹窗
+      resetBalanceForm: {
+        id: '',
+        userName: '',
+        balance: '',
+      },//重置余额数据
+      // 是否显示增减余额弹出层
+      balanceOpen: false,
+      // 增减余额表单数据
+      balanceForm: {
+        remark:'',
+      },
     };
   },
   created() {
@@ -565,6 +630,48 @@ export default {
         pageSize: 1000,
       }).then(response => {
         this.levelList = response.rows;
+      });
+    },
+    // 余额重置
+    balanceUpdate(row){
+      this.resetBalanceStatus = true
+      this.resetBalanceForm.id = row.id
+      this.resetBalanceForm.userName = row.userName
+      this.resetBalanceForm.balance = row.balance
+    },
+    // 提交重置余额
+    balanceUpdateSub(){
+      this.$refs["resetBalanceForm"].validate(valid => {
+        if (valid) {
+          resetBalance(this.resetBalanceForm).then(response => {
+            this.$modal.msgSuccess("修改成功");
+            this.resetBalanceStatus = false;
+            this.getList();
+          });
+        }
+      });
+    },
+    // 增减余额
+    handleBalance(data){
+      // this.balanceReset();
+      this.balanceOpen = true;
+      this.balanceForm.userName = data.userName
+    },
+    // 增减余额表单重置
+    balanceCancel(){
+      this.balanceOpen = false;
+      // this.balanceReset();
+    },
+    // 增减余额
+    balanceSub(){
+      this.$refs["balanceform"].validate(valid => {
+        if (valid) {
+          balanceUser(this.balanceForm).then(response => {
+            this.$modal.msgSuccess("操作成功");
+            this.balanceOpen = false;
+            this.getList();
+          });
+        }
       });
     },
   }
