@@ -26,12 +26,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态">
+      <!-- <el-form-item label="状态">
         <el-select v-model="queryParams.status" placeholder="请选择">
           <el-option value="" label="全部"></el-option>
           <el-option value="1" label="收入"></el-option>
           <el-option value="2" label="支出"></el-option>
         </el-select>
+      </el-form-item> -->
+      <el-form-item>
+        <el-checkbox v-model="queryParams.online" border :true-label="1" :false-label="0">在线会员</el-checkbox>
       </el-form-item>
       <el-form-item label="注册时间" prop="registerTime">
         <el-date-picker
@@ -100,7 +103,14 @@
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" width="65"/>
-      <el-table-column label="用户名" align="center" prop="userName" />
+      <el-table-column label="用户名" align="center" prop="userName">
+        <template slot-scope="scope">
+          <div v-if="scope.row.other.online === 1" class="red-text">
+            {{scope.row.userName}}
+          </div>
+          <div v-else>{{scope.row.userName}}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="昵称" align="center" prop="nickName" />
       <el-table-column label="真实姓名" align="center" prop="realName" />
       <el-table-column label="用户余额" align="center" prop="balance" />
@@ -425,6 +435,7 @@ export default {
         realName: null,
         phone: null,
         status: '',
+        online: 0,
       },
       // 表单参数
       form: {},
