@@ -92,4 +92,18 @@ public class Prepare
     @TableField(exist = false)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params;
+
+    @TableField(exist = false)
+    private Goods goods;
+
+    // 今日已完成单数
+    @TableField(exist = false)
+    private long finishCount;
+
+    // 选择的商品 商品id:商品数量,商品id:商品数量
+    @TableField(exist = false)
+    private String goodsSelect;
+
+    @TableField(exist = false)
+    private BigDecimal batchOrderAmount;
 }

@@ -39,6 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderAmount != null "> and order_amount = #{orderAmount}</if>
             <if test="status != null "> and status = #{status}</if>
         </where>
+        ORDER BY create_time DESC
     </select>
     
     <select id="selectPrepareById" parameterType="Long" resultMap="PrepareResult">

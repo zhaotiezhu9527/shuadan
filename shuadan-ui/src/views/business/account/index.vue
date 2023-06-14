@@ -26,6 +26,7 @@
           <el-option value="3" label="用户接单"></el-option>
           <el-option value="4" label="接单返佣"></el-option>
           <el-option value="5" label="下级返佣"></el-option>
+          <el-option value="6" label="系统扣款"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="时间" prop="optTime">
@@ -106,11 +107,12 @@
       </el-table-column>
       <el-table-column label="交易类型" align="center" prop="optType">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.type === 1" type="success">充值</el-tag>
-          <el-tag v-else-if="scope.row.type === 2" type="danger">提现</el-tag>
-          <el-tag v-else-if="scope.row.type === 3" type="danger">用户接单</el-tag>
-          <el-tag v-else-if="scope.row.type === 4" type="danger">接单返佣</el-tag>
-          <el-tag v-else-if="scope.row.type === 5" type="danger">下级返佣</el-tag>
+          <el-tag v-if="scope.row.optType === 1" type="success">充值</el-tag>
+          <el-tag v-else-if="scope.row.optType === 2" type="danger">提现</el-tag>
+          <el-tag v-else-if="scope.row.optType === 3" type="danger">用户接单</el-tag>
+          <el-tag v-else-if="scope.row.optType === 4" type="danger">接单返佣</el-tag>
+          <el-tag v-else-if="scope.row.optType === 5" type="danger">下级返佣</el-tag>
+          <el-tag v-else-if="scope.row.optType === 6" type="danger">系统扣款</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="关联订单号" align="center" prop="refNo" />
@@ -139,7 +141,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"

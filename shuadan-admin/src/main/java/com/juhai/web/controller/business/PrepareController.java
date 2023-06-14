@@ -1,8 +1,12 @@
 package com.juhai.web.controller.business;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.juhai.business.domain.Goods;
 import com.juhai.business.domain.OrderCount;
 import com.juhai.business.domain.Prepare;
+import com.juhai.business.domain.User;
 import com.juhai.business.service.IGoodsService;
 import com.juhai.business.service.IOrderCountService;
 import com.juhai.business.service.IPrepareService;
@@ -13,14 +17,16 @@ import com.juhai.common.core.domain.AjaxResult;
 import com.juhai.common.core.page.TableDataInfo;
 import com.juhai.common.enums.BusinessType;
 import com.juhai.common.utils.poi.ExcelUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +61,7 @@ public class PrepareController extends BaseController
         startPage();
         List<Prepare> list = prepareService.selectPrepareList(prepare);
         List<String> users = list.stream().map(Prepare::getUserName).collect(Collectors.toList());
+        List<String> preBatchs = list.stream().map(Prepare::getPreBatch).collect(Collectors.toList());
 
         // 查询今日完成单数
         Date now = new Date();
@@ -63,6 +70,28 @@ public class PrepareController extends BaseController
                         .in(OrderCount::getUserName, users)
                         .eq(OrderCount::getToday, now)
         );
+        Map<String, OrderCount> orderCountMap = orderCounts.stream().collect(Collectors.toMap(OrderCount::getUserName, e -> e));
+
+        // 查询商品信息
+        List<Goods> goodsList = goodsService.list();
+        Map<Long, Goods> goodsMap = goodsList.stream().collect(Collectors.toMap(Goods::getId, e -> e));
+
+        // 查询批次信息
+        List<Prepare> preBatchList = prepareService.list(new LambdaQueryWrapper<Prepare>().in(Prepare::getPreBatch, preBatchs));
+        Map<String, BigDecimal> orderAmountMap = new HashMap<>();
+        for (Prepare temp : preBatchList) {
+            BigDecimal bigDecimal = orderAmountMap.getOrDefault(temp.getPreBatch(), new BigDecimal(0));
+            orderAmountMap.put(temp.getPreBatch(), NumberUtil.add(bigDecimal, temp.getOrderAmount()));
+        }
+
+
+        for (Prepare temp : list) {
+            temp.setGoods(goodsMap.get(temp.getGoodsId()));
+            OrderCount orderCount = orderCountMap.get(temp.getUserName());
+            temp.setFinishCount(orderCount == null ? 0 : orderCount.getOrderCount());
+            temp.setBatchOrderAmount(orderAmountMap.get(temp.getPreBatch()));
+        }
+
         return getDataTable(list);
     }
 
@@ -94,6 +123,9 @@ public class PrepareController extends BaseController
                         .in(OrderCount::getUserName, prepare.getUserName())
                         .eq(OrderCount::getToday, now)
         );
+        prepare.setFinishCount(orderCount == null ? 0 : orderCount.getOrderCount());
+
+        prepare.setGoods(goodsService.getById(prepare.getGoodsId()));
         return success(prepare);
     }
 
@@ -106,6 +138,52 @@ public class PrepareController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody Prepare prepare)
     {
+        String batch = IdUtil.fastSimpleUUID();
+
+        User user = userService.getUserByName(prepare.getUserName());
+        if (user == null) {
+            return AjaxResult.error("用户名不存在");
+        }
+
+        List<Prepare> prepares = new ArrayList<>();
+
+        String goodsSelect = prepare.getGoodsSelect();
+        String[] goodsArr = goodsSelect.split(",");
+
+        // 获取商品
+        List<Goods> goodsList = goodsService.list();
+        Map<Long, Goods> goodsMap = goodsList.stream().collect(Collectors.toMap(Goods::getId, e -> e));
+
+        BigDecimal orderAmount = new BigDecimal(0);
+        for (int i = 0; i < goodsArr.length; i++) {
+            String goodsStr = goodsArr[i];
+            Long goodsId = NumberUtils.toLong(goodsStr.split(":")[0]);
+            Long goodsCount = NumberUtils.toLong(goodsStr.split(":")[1]);
+            Goods goods = goodsMap.get(goodsId);
+            if (goods == null) {
+                continue;
+            }
+
+            Prepare p = new Prepare();
+            p.setUserName(prepare.getUserName());
+            p.setTriggerNum(prepare.getTriggerNum() + i);
+            p.setGoodsId(goodsId);
+            p.setGoodsCount(goodsCount);
+            p.setPreBatch(batch);
+            p.setPromptText(StringUtils.isBlank(prepare.getPromptText()) ? "加急单" : prepare.getPromptText());
+            p.setCommissionMul(prepare.getCommissionMul());
+            p.setOrderAmount(NumberUtil.mul(goods.getGoodsPrice(), goodsCount));
+            p.setStatus(0L);
+            p.setCreateBy(getUsername());
+            p.setCreateTime(new Date());
+            p.setUpdateBy(getUsername());
+            p.setUpdateTime(new Date());
+            p.setRemark(null);
+            prepares.add(p);
+
+            orderAmount = NumberUtil.add(orderAmount, NumberUtil.mul(goodsCount, goods.getGoodsPrice()));
+        }
+        prepareService.saveBatch(prepares);
         return success();
     }
 
@@ -117,6 +195,11 @@ public class PrepareController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody Prepare prepare)
     {
+
+        Goods goods = goodsService.getById(prepare.getGoodsId());
+
+        prepare.setOrderAmount(NumberUtil.mul(goods.getGoodsPrice(), prepare.getGoodsCount()));
+
         return toAjax(prepareService.updatePrepare(prepare));
     }
 
@@ -129,6 +212,7 @@ public class PrepareController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
+
         return toAjax(prepareService.deletePrepareByIds(ids));
     }
 }
