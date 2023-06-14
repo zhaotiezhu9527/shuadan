@@ -1,19 +1,24 @@
 package com.juhai.framework.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import icu.mhb.mybatisplus.plugln.injector.JoinDefaultSqlInjector;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.List;
+
 @MapperScan({"com.juhai.*.mapper"})
 @EnableTransactionManagement(proxyTargetClass = true)
 @Configuration
-public class MybatisPlusConfig
+public class MybatisPlusConfig extends JoinDefaultSqlInjector
 {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor()
@@ -55,5 +60,10 @@ public class MybatisPlusConfig
     public BlockAttackInnerInterceptor blockAttackInnerInterceptor()
     {
         return new BlockAttackInnerInterceptor();
+    }
+
+    @Override
+    public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+        return super.getMethodList(mapperClass, tableInfo);
     }
 }

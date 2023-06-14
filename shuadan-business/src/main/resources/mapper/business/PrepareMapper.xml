@@ -8,6 +8,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="userName"    column="user_name"    />
         <result property="triggerNum"    column="trigger_num"    />
+        <result property="goodsId"    column="goods_id"    />
+        <result property="goodsCount"    column="goods_count"    />
+        <result property="preBatch"    column="pre_batch"    />
         <result property="promptText"    column="prompt_text"    />
         <result property="commissionMul"    column="commission_mul"    />
         <result property="orderAmount"    column="order_amount"    />
@@ -20,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPrepareVo">
-        select id, user_name, trigger_num, prompt_text, commission_mul, order_amount, status, create_time, create_by, update_time, update_by, remark from t_prepare
+        select id, user_name, trigger_num, goods_id, goods_count, pre_batch, prompt_text, commission_mul, order_amount, status, create_time, create_by, update_time, update_by, remark from t_prepare
     </sql>
 
     <select id="selectPrepareList" parameterType="Prepare" resultMap="PrepareResult">
@@ -28,6 +31,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
             <if test="triggerNum != null "> and trigger_num = #{triggerNum}</if>
+            <if test="goodsId != null "> and goods_id = #{goodsId}</if>
+            <if test="goodsCount != null "> and goods_count = #{goodsCount}</if>
+            <if test="preBatch != null  and preBatch != ''"> and pre_batch = #{preBatch}</if>
             <if test="promptText != null  and promptText != ''"> and prompt_text = #{promptText}</if>
             <if test="commissionMul != null "> and commission_mul = #{commissionMul}</if>
             <if test="orderAmount != null "> and order_amount = #{orderAmount}</if>
@@ -45,6 +51,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userName != null and userName != ''">user_name,</if>
             <if test="triggerNum != null">trigger_num,</if>
+            <if test="goodsId != null">goods_id,</if>
+            <if test="goodsCount != null">goods_count,</if>
+            <if test="preBatch != null">pre_batch,</if>
             <if test="promptText != null">prompt_text,</if>
             <if test="commissionMul != null">commission_mul,</if>
             <if test="orderAmount != null">order_amount,</if>
@@ -58,6 +67,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userName != null and userName != ''">#{userName},</if>
             <if test="triggerNum != null">#{triggerNum},</if>
+            <if test="goodsId != null">#{goodsId},</if>
+            <if test="goodsCount != null">#{goodsCount},</if>
+            <if test="preBatch != null">#{preBatch},</if>
             <if test="promptText != null">#{promptText},</if>
             <if test="commissionMul != null">#{commissionMul},</if>
             <if test="orderAmount != null">#{orderAmount},</if>
@@ -75,6 +87,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="userName != null and userName != ''">user_name = #{userName},</if>
             <if test="triggerNum != null">trigger_num = #{triggerNum},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="goodsCount != null">goods_count = #{goodsCount},</if>
+            <if test="preBatch != null">pre_batch = #{preBatch},</if>
             <if test="promptText != null">prompt_text = #{promptText},</if>
             <if test="commissionMul != null">commission_mul = #{commissionMul},</if>
             <if test="orderAmount != null">order_amount = #{orderAmount},</if>

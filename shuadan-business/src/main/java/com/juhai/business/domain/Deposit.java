@@ -21,7 +21,7 @@ import com.juhai.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value ="t_deposit")
-public class Deposit extends BaseEntity
+public class Deposit
 {
     private static final long serialVersionUID = 1L;
 
@@ -70,120 +70,6 @@ public class Deposit extends BaseEntity
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date orderTime;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
-
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setOrderNo(String orderNo) 
-    {
-        this.orderNo = orderNo;
-    }
-
-    public String getOrderNo() 
-    {
-        return orderNo;
-    }
-    public void setUserName(String userName) 
-    {
-        this.userName = userName;
-    }
-
-    public String getUserName() 
-    {
-        return userName;
-    }
-    public void setRealName(String realName) 
-    {
-        this.realName = realName;
-    }
-
-    public String getRealName() 
-    {
-        return realName;
-    }
-    public void setOptAmount(BigDecimal optAmount) 
-    {
-        this.optAmount = optAmount;
-    }
-
-    public BigDecimal getOptAmount() 
-    {
-        return optAmount;
-    }
-    public void setOptType(Long optType) 
-    {
-        this.optType = optType;
-    }
-
-    public Long getOptType() 
-    {
-        return optType;
-    }
-    public void setStatus(Long status) 
-    {
-        this.status = status;
-    }
-
-    public Long getStatus() 
-    {
-        return status;
-    }
-    public void setUserAgent(String userAgent) 
-    {
-        this.userAgent = userAgent;
-    }
-
-    public String getUserAgent() 
-    {
-        return userAgent;
-    }
-    public void setUserAgentNode(String userAgentNode) 
-    {
-        this.userAgentNode = userAgentNode;
-    }
-
-    public String getUserAgentNode() 
-    {
-        return userAgentNode;
-    }
-    public void setUserAgentLevel(Long userAgentLevel) 
-    {
-        this.userAgentLevel = userAgentLevel;
-    }
-
-    public Long getUserAgentLevel() 
-    {
-        return userAgentLevel;
-    }
-    public void setOrderTime(Date orderTime) 
-    {
-        this.orderTime = orderTime;
-    }
-
-    public Date getOrderTime() 
-    {
-        return orderTime;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("orderNo", getOrderNo())
-            .append("userName", getUserName())
-            .append("realName", getRealName())
-            .append("optAmount", getOptAmount())
-            .append("optType", getOptType())
-            .append("status", getStatus())
-            .append("userAgent", getUserAgent())
-            .append("userAgentNode", getUserAgentNode())
-            .append("userAgentLevel", getUserAgentLevel())
-            .append("orderTime", getOrderTime())
-            .toString();
-    }
+    @Excel(name = "创建人")
+    private String createBy;
 }

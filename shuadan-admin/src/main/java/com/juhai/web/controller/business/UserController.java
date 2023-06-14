@@ -2,34 +2,36 @@ package com.juhai.web.controller.business;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.juhai.business.domain.DayReport;
-import com.juhai.business.domain.Goods;
-import com.juhai.business.domain.User;
-import com.juhai.business.service.IDayReportService;
-import com.juhai.business.service.IGoodsService;
-import com.juhai.business.service.IUserService;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.juhai.business.domain.*;
+import com.juhai.business.service.*;
 import com.juhai.common.annotation.Anonymous;
 import com.juhai.common.annotation.Log;
 import com.juhai.common.core.controller.BaseController;
 import com.juhai.common.core.domain.AjaxResult;
 import com.juhai.common.core.page.TableDataInfo;
 import com.juhai.common.enums.BusinessType;
-import com.juhai.common.utils.DateUtils;
+import com.juhai.common.utils.StringUtils;
 import com.juhai.common.utils.poi.ExcelUtil;
+import com.juhai.web.controller.business.request.OptUserMoneyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 会员列表Controller
@@ -49,6 +51,18 @@ public class UserController extends BaseController
 
     @Autowired
     private IGoodsService goodsService;
+
+    @Autowired
+    private IParamterService paramterService;
+
+    @Autowired
+    private IOrderService orderService;
+
+    @Autowired
+    private IDepositService depositService;
+
+    @Autowired
+    private IAccountService accountService;
 
     /**
      * 查询会员列表列表
@@ -93,7 +107,69 @@ public class UserController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody User user)
     {
-        return toAjax(userService.insertUser(user));
+        // 校验用户名 密码 支付密码
+        boolean matchUserName = ReUtil.isMatch("^[a-zA-Z0-9]{4,12}$", user.getUserName());
+        if (!matchUserName) {
+            return AjaxResult.error("请输入4-12位用户名");
+        }
+        boolean matchLoginPwd = ReUtil.isMatch("^[a-zA-Z0-9]{6,12}$", user.getLoginPwd());
+        if (!matchLoginPwd) {
+            return AjaxResult.error("请输入6-12位登录密码");
+        }
+        boolean matchPayPwd = ReUtil.isMatch("^\\d{6}$", user.getPayPwd());
+        if (!matchPayPwd) {
+            return AjaxResult.error("请输入6位支付密码");
+        }
+
+        if (StringUtils.isBlank(user.getUserAgent())) {
+            Map<String, String> allParamByMap = paramterService.getAllParamByMap();
+            user.setUserAgent(allParamByMap.get("default_agent"));
+        }
+
+        User agent = userService.getUserByName(user.getUserAgent());
+        if (agent == null) {
+            return AjaxResult.error("未查询到上级代理[" + user.getUserAgent() + "]");
+        }
+
+        User temp = new User();
+        temp.setUserName(user.getUserName());
+        temp.setNickName(user.getNickName());
+        temp.setBalance(new BigDecimal("0"));
+        temp.setFreezeBalance(new BigDecimal("0"));
+        temp.setLoginPwd(SecureUtil.md5(user.getLoginPwd()));
+        temp.setPayPwd(SecureUtil.md5(user.getPayPwd()));
+        temp.setStatus(0L);
+        temp.setRealName(null);
+        temp.setPhone(null);
+        temp.setBankName(null);
+        temp.setBankNo(null);
+        temp.setBankAddr(null);
+        temp.setCreditValue(100L);
+        temp.setLevelId(1L);
+        temp.setAvatarId(1L);
+        temp.setInviteCode(RandomUtil.randomNumbers(6));
+        temp.setUserAgent(agent.getUserName());
+        temp.setUserAgentNode(agent.getUserAgentNode() + user.getUserName() + "|");
+        temp.setUserAgentLevel(agent.getUserAgentLevel() + 1);
+        temp.setRegisterTime(new Date());
+        temp.setRegisterIp("0.0.0.0");
+        temp.setLastTime(new Date());
+        temp.setLastIp("");
+        temp.setRemake(null);
+        temp.setUpdateOrder(0L);
+        temp.setDeposit(new BigDecimal("0"));
+        temp.setWithdraw(new BigDecimal("0"));
+        temp.setIncome(new BigDecimal("0"));
+        temp.setBet(new BigDecimal("0"));
+        temp.setInviteCount(0L);
+        userService.save(temp);
+
+        userService.update(
+                new UpdateWrapper<User>().lambda()
+                        .setSql("invite_count = invite_count + " + 1)
+                        .eq(User::getUserName, agent.getUserName())
+        );
+        return AjaxResult.success();
     }
 
     /**
@@ -104,7 +180,41 @@ public class UserController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody User user)
     {
+        if (StringUtils.isNotBlank(user.getLoginPwd())) {
+            boolean matchLoginPwd = ReUtil.isMatch("^[a-zA-Z0-9]{6,12}$", user.getLoginPwd());
+            if (!matchLoginPwd) {
+                return AjaxResult.error("请输入6-12位登录密码");
+            }
+            user.setLoginPwd(SecureUtil.md5(user.getLoginPwd()));
+        } else {
+            user.setLoginPwd(null);
+        }
+
+        if (StringUtils.isNotBlank(user.getPayPwd())) {
+            boolean matchPayPwd = ReUtil.isMatch("^\\d{6}$", user.getPayPwd());
+            if (!matchPayPwd) {
+                return AjaxResult.error("请输入6位支付密码");
+            }
+            user.setPayPwd(SecureUtil.md5(user.getPayPwd()));
+        } else {
+            user.setPayPwd(null);
+        }
+        user.setBalance(null);
+
         return toAjax(userService.updateUser(user));
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:user:optMoney')")
+    @Log(title = "【重置用户余额】", businessType = BusinessType.UPDATE)
+    @PostMapping("/resetBalance")
+    public AjaxResult resetBalance(@RequestBody User user)
+    {
+        userService.update(
+                new UpdateWrapper<User>().lambda()
+                        .eq(User::getId, user.getId())
+                        .set(User::getBalance, user.getBalance())
+        );
+        return AjaxResult.success();
     }
 
     /**
@@ -118,6 +228,103 @@ public class UserController extends BaseController
         return toAjax(userService.deleteUserByIds(ids));
     }
 
+    @Transactional
+    @PreAuthorize("@ss.hasPermi('business:user:optMoney')")
+    @Log(title = "【用户上下分】", businessType = BusinessType.UPDATE)
+    @PostMapping("/optMoney")
+    public AjaxResult optMoney(@RequestBody OptUserMoneyRequest request) throws Exception {
+        User user = userService.getUserByName(request.getUserName());
+        if (user == null) {
+            return AjaxResult.error("用户不存在.");
+        }
+        Date now = new Date();
+        BigDecimal money = new BigDecimal(request.getMoney());
+        if (money.doubleValue() <= 0) {
+            return AjaxResult.error("请正确输入金额.");
+        }
+
+        if (org.apache.commons.lang3.StringUtils.equals("1", request.getType())) {
+            // 加钱
+            userService.update(
+                    new UpdateWrapper<User>()
+                            .setSql("balance = balance + " + money + ",deposit = deposit +" + money)
+                            .eq("user_name", user.getUserName())
+            );
+
+            // 充值记录
+            String orderNo = IdUtil.getSnowflakeNextIdStr();
+            Deposit deposit = new Deposit();
+            deposit.setOrderNo(IdUtil.getSnowflakeNextIdStr());
+            deposit.setUserName(user.getUserName());
+            deposit.setRealName(user.getRealName());
+            deposit.setOptAmount(money);
+            deposit.setOptType(1L);
+            deposit.setStatus(1L);
+            deposit.setUserAgent(user.getUserAgent());
+            deposit.setUserAgentNode(user.getUserAgentNode());
+            deposit.setUserAgentLevel(user.getUserAgentLevel());
+            deposit.setOrderTime(new Date());
+            deposit.setCreateBy(getUsername());
+            depositService.save(deposit);
+
+            // 流水记录
+            Account account = new Account();
+            account.setUserName(user.getUserName());
+            account.setOptAmount(money);
+            account.setType(1L);
+            account.setOptType(1L);
+            account.setOptTime(new Date());
+            account.setUserAgent(user.getUserAgent());
+            account.setUserAgentNode(user.getUserAgentNode());
+            account.setUserAgentLevel(user.getUserAgentLevel());
+            account.setRefNo(orderNo);
+            account.setAccountNo(IdUtil.getSnowflakeNextIdStr());
+            account.setRemark(request.getRemark());
+            accountService.save(account);
+
+            // 记录报表
+            DayReport dayReport = new DayReport();
+            dayReport.setUserName(user.getUserName());
+            dayReport.setToday(new Date());
+            dayReport.setDeposit(money);
+            dayReport.setWithdraw(new BigDecimal("0"));
+            dayReport.setBet(new BigDecimal("0"));
+            dayReport.setCommission(new BigDecimal("0"));
+            dayReport.setIncome(new BigDecimal("0"));
+            dayReport.setUserAgent(user.getUserAgent());
+            dayReport.setUserAgentNode(user.getUserAgentNode());
+            dayReport.setUserAgentLevel(user.getUserAgentLevel());
+            dayReport.setCreateTime(new Date());
+            dayReport.setUpdateTime(new Date());
+            dayReportService.insertOrUpdate(dayReport);
+
+            return toAjax(true);
+        } else if (org.apache.commons.lang3.StringUtils.equals("2", request.getType())) {
+            if (money.doubleValue() > user.getBalance().doubleValue()) {
+                return AjaxResult.error("用户账户余额为:" + user.getBalance() + "元");
+            }
+            // 加钱
+            userService.updateUserBalance(user.getUserName(), money.negate());
+
+            // 流水记录
+            Account account = new Account();
+            account.setUserName(user.getUserName());
+            account.setOptAmount(money);
+            account.setType(2L);
+            account.setOptType(6L);
+            account.setOptTime(now);
+            account.setUserAgent(user.getUserAgent());
+            account.setUserAgentNode(user.getUserAgentNode());
+            account.setUserAgentLevel(user.getUserAgentLevel());
+            account.setRefNo(null);
+            account.setAccountNo(IdUtil.getSnowflakeNextIdStr());
+            account.setRemark(request.getRemark());
+            accountService.save(account);
+            // 下分
+            return toAjax(true);
+        }
+        return toAjax(false);
+    }
 
     /**
      * 今日总报表
@@ -197,9 +404,21 @@ public class UserController extends BaseController
         DayReport dayReport = dayReportService.getOne(new QueryWrapper<DayReport>().select("sum(deposit) as deposit,sum(withdraw) as withdraw,sum(bet) as bet,sum(commission) as commission"));
 
         // 订单总量
-        object.put("totalOrders", 0);
-        object.put("todayOrders", 0);
-        object.put("yesterdayOrders", 0);
+        long totalOrders = orderService.count();
+        object.put("totalOrders", totalOrders);
+        List<Order> orders = orderService.list(new LambdaQueryWrapper<Order>().between(Order::getOrderTime, yesterdayBegin, todayEnd));
+        long todayOrders = 0;
+        long yesterdayOrders = 0;
+        for (Order order : orders) {
+            if (DateUtil.isIn(order.getOrderTime(), todayBegin, todayEnd)) {
+                todayOrders += 1;
+            }
+            if (DateUtil.isIn(order.getOrderTime(), yesterdayBegin, yesterdayEnd)) {
+                yesterdayOrders += 1;
+            }
+        }
+        object.put("todayOrders", todayOrders);
+        object.put("yesterdayOrders", yesterdayOrders);
         // 订单总金额
         object.put("totalOrderAmounts", dayReport.getBet());
         object.put("todayOrderAmounts", todayOrderAmounts);

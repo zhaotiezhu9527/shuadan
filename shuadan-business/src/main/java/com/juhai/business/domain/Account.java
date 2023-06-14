@@ -46,7 +46,7 @@ public class Account extends BaseEntity
     private Long type;
 
     /** 1:充值 2:提现 3:用户接单 4:接单返佣 5:下级返佣 */
-    @Excel(name = "1:充值 2:提现 3:用户接单 4:接单返佣 5:下级返佣")
+    @Excel(name = "1:充值 2:提现 3:用户接单 4:接单返佣 5:下级返佣 6:后台扣款")
     private Long optType;
 
     /** 上级代理 */
