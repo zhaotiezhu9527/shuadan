@@ -1,5 +1,6 @@
 package com.juhai.web.controller.business;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
@@ -23,15 +24,14 @@ import com.juhai.common.utils.StringUtils;
 import com.juhai.common.utils.poi.ExcelUtil;
 import com.juhai.web.controller.business.request.OptUserMoneyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 会员列表Controller
@@ -64,6 +64,9 @@ public class UserController extends BaseController
     @Autowired
     private IAccountService accountService;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     /**
      * 查询会员列表列表
      */
@@ -71,6 +74,35 @@ public class UserController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(User user)
     {
+        if (user.getOnline() == 1) {
+            // 获取所有在线用户key
+            Set<String> keys = redisTemplate.keys("user:online:token:*");
+            // 没有在线用户 直接返回
+            if (CollUtil.isEmpty(keys)) {
+                return getDataTable(new ArrayList<>());
+            }
+
+            List<String> onlineNames = new ArrayList<>();
+            if (CollUtil.isNotEmpty(keys)) {
+                for (String key : keys) {
+                    onlineNames.add(key.split(":")[3]);
+                }
+            }
+            user.getParams().put("onlineNames", onlineNames);
+        }
+
+        startPage();
+        List<User> list = userService.selectUserList(user);
+        return getDataTable(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:user:list')")
+    @GetMapping("/node")
+    public TableDataInfo node(User user)
+    {
+        User user1 = userService.getById(user.getId());
+        user.setUserAgentLevel(user1.getUserAgentLevel() + user.getUserAgentLevel());
+        user.setUserAgentNode("|" + user1.getUserName() + "|");
         startPage();
         List<User> list = userService.selectUserList(user);
         return getDataTable(list);

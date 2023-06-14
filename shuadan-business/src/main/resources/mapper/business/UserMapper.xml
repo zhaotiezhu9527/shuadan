@@ -63,6 +63,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgentNode != null  and userAgentNode != ''"> and user_agent_node like concat('%', #{userAgentNode}, '%')</if>
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
             <if test="params.beginRegisterTime != null and params.beginRegisterTime != '' and params.endRegisterTime != null and params.endRegisterTime != ''"> and register_time between #{params.beginRegisterTime} and #{params.endRegisterTime}</if>
+             <!-- 在线用户 -->
+            <if test="online == 1">
+                and user_name in
+                <foreach collection="params.onlineNames" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
         </where>
         ORDER BY register_time DESC
     </select>

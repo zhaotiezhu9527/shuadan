@@ -1,16 +1,18 @@
 package com.juhai.business.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.juhai.common.annotation.Excel;
 import com.juhai.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 会员列表对象 t_user
@@ -148,6 +150,20 @@ public class User extends BaseEntity
     /** 推荐人数 */
     @Excel(name = "推荐人数")
     private Long inviteCount;
+
+    @TableField(exist = false)
+    private int online;
+
+    public int getOnline() {
+        return online;
+    }
+
+    public void setOnline(int online) {
+        this.online = online;
+    }
+
+    @TableField(exist = false)
+    private JSONObject other = new JSONObject();
 
     public void setId(Long id) 
     {
@@ -427,6 +443,14 @@ public class User extends BaseEntity
     public Long getInviteCount() 
     {
         return inviteCount;
+    }
+
+    public JSONObject getOther() {
+        return other;
+    }
+
+    public void setOther(JSONObject other) {
+        this.other = other;
     }
 
     @Override

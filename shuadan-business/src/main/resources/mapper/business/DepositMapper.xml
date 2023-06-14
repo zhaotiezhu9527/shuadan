@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDepositVo">
-        select id, order_no, user_name, real_name, opt_amount, opt_type, status, user_agent, user_agent_node, user_agent_level, order_time, create_time from t_deposit
+        select id, order_no, user_name, real_name, opt_amount, opt_type, status, user_agent, user_agent_node, user_agent_level, order_time from t_deposit
     </sql>
 
     <select id="selectDepositList" parameterType="Deposit" resultMap="DepositResult">
