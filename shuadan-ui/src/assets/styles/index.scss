@@ -208,14 +208,18 @@ aside {
 }
 .prepare-title{
   width: 100%;
+  overflow: hidden;
   .prepare-title-btn{
     background-color: #409EFF;
     padding: 10px 20px;
     border-radius: 5px;
     color: #fff;
     font-size: 12px;
-    float: left;
+    float: right;
   }
+}
+.prepare-content{
+  padding: 10px;
 }
 .blue-text{
   color: rgb(32, 160, 255);
@@ -223,4 +227,11 @@ aside {
 } 
 .red-text{
   color: #F56C6C;
+}
+.margin-top10{
+  margin-top: 10px;
+}
+.pre-delivery-foot{
+  width: 200px;
+  margin: auto;
 }

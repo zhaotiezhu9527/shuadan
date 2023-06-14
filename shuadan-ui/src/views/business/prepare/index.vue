@@ -1,5 +1,4 @@
 <template>
-  <!-- 预派送列表 -->
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="用户名" prop="userName">
@@ -23,7 +22,7 @@
           plain
           icon="el-icon-plus"
           size="mini"
-          @click="handleAdd"
+          @click="handleAddGoods"
           v-hasPermi="['business:prepare:add']"
         >新增</el-button>
       </el-col>
@@ -64,41 +63,31 @@
 
     <el-table v-loading="loading" :data="prepareList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" width="60"/>
+      <el-table-column label="id" align="center" prop="id" width="65"/>
       <el-table-column label="用户名" align="center" prop="userName" />
-      <el-table-column label="今日完成单数" align="center" prop="finishCount" />
+      <el-table-column label="今日完成单数" align="center" prop="finishCount" width="108" />
       <el-table-column label="触发单数" align="center" prop="triggerNum" />
-      <el-table-column label="提示文本" align="center" prop="promptText" />
+      <el-table-column label="批次编号" align="center" prop="preBatch" />
+      <el-table-column label="批次金额" align="center" prop="batchOrderAmount" />
+      <el-table-column label="商品id" align="center" prop="goodsId" />
+      <el-table-column label="商品名称" align="center" width="250">
+        <template slot-scope="scope">
+          <div v-if="scope.row.goods">{{scope.row.goods.goodsName}}</div>
+          <div v-else> - </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="商品数量" align="center" prop="goodsCount" />
       <el-table-column label="佣金倍数" align="center" prop="commissionMul" />
-      <el-table-column label="订单总额" align="center" prop="orderAmount" />
-      
-      <el-table-column label="商品ID：数量" align="center" prop="status">
-        <template slot-scope="scope">
-          <div v-for="(item,index) in scope.row.details" :key="index">
-          {{ item.goodsId }}:{{ item.goodsCount }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="下单时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="订单金额" align="center" prop="orderAmount" />
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" type="danger">未完成</el-tag>
-          <el-tag v-else-if="scope.row.status === 1" type="success">已完成</el-tag>
-          <el-tag v-else> - </el-tag>
+          <div v-if="scope.row.status === 0">未完成</div>
+          <div v-else-if="scope.row.status === 1">已完成</div>
         </template>
       </el-table-column>
+      <el-table-column label="订单时间" align="center" prop="createTime" width="160"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleQuery(scope.row.id)"
-            v-hasPermi="['business:prepare:query']"
-          >查看</el-button>
           <el-button
             size="mini"
             type="text"
@@ -129,10 +118,19 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="userName">
-          <el-input :disabled="form.id ? true : false" v-model="form.userName" placeholder="请输入用户名" />
+          <el-input v-model="form.userName" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item label="触发单数" prop="triggerNum">
           <el-input v-model="form.triggerNum" placeholder="请输入触发单数" />
+        </el-form-item>
+        <el-form-item label="商品id" prop="goodsId">
+          <el-input v-model="form.goodsId" placeholder="请输入商品id" />
+        </el-form-item>
+        <el-form-item label="商品数量" prop="goodsCount">
+          <el-input v-model="form.goodsCount" placeholder="请输入商品数量" />
+        </el-form-item>
+        <el-form-item label="批次" prop="preBatch">
+          <el-input v-model="form.preBatch" placeholder="请输入批次" />
         </el-form-item>
         <el-form-item label="提示文本" prop="promptText">
           <el-input v-model="form.promptText" placeholder="请输入提示文本" />
@@ -140,28 +138,16 @@
         <el-form-item label="佣金倍数" prop="commissionMul">
           <el-input v-model="form.commissionMul" placeholder="请输入佣金倍数" />
         </el-form-item>
+        <el-form-item label="订单总额" prop="orderAmount">
+          <el-input v-model="form.orderAmount" placeholder="请输入订单总额" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 查看预派送列表对话框 -->
-    <el-dialog title="商品详情" :visible.sync="queryOpen" width="800px" append-to-body>
-      <el-table :data="queryList">
-        <el-table-column label="商品id" prop="goodsId" />
-        <el-table-column label="商品名称" prop="goods.goodsName" width="400"/>
-        <el-table-column label="商品价格" prop="goods.goodsPrice" />
-        <el-table-column label="数量" prop="goodsCount" />
-        <el-table-column label="商品图片" width="120">
-          <template slot-scope="scope">
-          <img class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.goods.goodsImg" />
-        </template>
-        </el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="queryOpen = false">确 定</el-button>
-        <el-button @click="queryOpen = false">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -169,7 +155,6 @@
 
 <script>
 import { listPrepare, getPrepare, delPrepare, addPrepare, updatePrepare } from "@/api/business/prepare";
-import Cookies from "js-cookie";
 
 export default {
   name: "Prepare",
@@ -206,15 +191,11 @@ export default {
         userName: [
           { required: true, message: "用户名不能为空", trigger: "blur" }
         ],
-      },
-      queryOpen: false,//查看弹窗状态
-      queryList: [],//查看数据
-      resourceDomain: {},
+      }
     };
   },
   created() {
     this.getList();
-    this.getCookie()
   },
   methods: {
     /** 查询预派送列表列表 */
@@ -237,6 +218,9 @@ export default {
         id: null,
         userName: null,
         triggerNum: null,
+        goodsId: null,
+        goodsCount: null,
+        preBatch: null,
         promptText: null,
         commissionMul: null,
         orderAmount: null,
@@ -275,14 +259,11 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      // getPrepare(id).then(response => {
-      //   this.form = response.data;
-      //   this.open = true;
-      //   this.title = "修改预派送列表";
-      // });
-      const tableId = row.id || this.ids;
-      const params = { pageNum: this.queryParams.pageNum };
-      this.$tab.openPage("编辑预派送", '/trade/prepare-edit/index/' + tableId, params);
+      getPrepare(id).then(response => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改预派送列表";
+      });
     },
     /** 提交按钮 */
     submitForm() {
@@ -320,16 +301,8 @@ export default {
         ...this.queryParams
       }, `prepare_${new Date().getTime()}.xlsx`)
     },
-    // 查看弹窗
-    handleQuery(id){
-      this.queryOpen = true
-      getPrepare(id).then(response => {
-        this.queryList = response.data.details;
-        // this.queryList = data
-      });
-    },
-    getCookie() {
-      this.resourceDomain = JSON.parse(Cookies.get("config"));
+    handleAddGoods() {
+      this.$tab.openPage("编辑预派送", '/trade/prepare-edit/index/0');
     },
   }
 };
