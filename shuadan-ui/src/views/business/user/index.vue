@@ -166,7 +166,7 @@
             <div>下级人数：{{ scope.row.inviteCount }}</div>
           </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="200" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -189,6 +189,31 @@
             @click="handleBalance(scope.row)"
             v-hasPermi="['business:user:optMoney']"
           >上下分</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            business:deposit:list
+            v-hasPermi="['business:deposit:list']"
+            @click="goPages(scope.row,'deposit')"
+          >充值记录</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            v-hasPermi="['business:account:list']"
+            @click="goPages(scope.row,'account')"
+          >账变记录</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            v-hasPermi="['business:withdraw:list']"
+            @click="goPages(scope.row,'withdraw')"
+          >提现记录</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            v-hasPermi="['business:user:list']"
+            @click="viewTeam(scope.row.id)"
+          >查看团队</el-button>
           <!-- <el-button
             size="mini"
             type="text"
@@ -329,11 +354,41 @@
         <el-button @click="balanceCancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 查看团队弹窗 -->
+    <el-dialog title="团队信息" :visible.sync="detailsOpen" width="1200px" append-to-body>
+      <el-tabs v-model="userform.userAgentLevel" type="card" @tab-click="viewTeam(userform.id)">
+        <el-tab-pane label="一级会员" name="1"></el-tab-pane>
+        <el-tab-pane label="二级会员" name="2"></el-tab-pane>
+        <el-tab-pane label="三级会员" name="3"></el-tab-pane>
+      </el-tabs>
+      <el-table :data="detailList">
+        <el-table-column label="用户ID" align="center" prop="id"/>
+        <el-table-column label="用户名" align="center" prop="userName" />
+        <el-table-column label="账户余额" align="center" prop="balance" />
+        <el-table-column label="佣金" align="center" prop="income" />
+        <el-table-column label="充值" align="center" prop="deposit" />
+        <el-table-column label="提现" align="center" prop="withdraw" />
+        <el-table-column label="上级会员" align="center" prop="userAgent" />
+        <el-table-column label="直推人数" align="center" prop="inviteCount" />
+        <el-table-column label="注册时间" align="center" width="180" prop="registerTime" />
+      </el-table>
+      <pagination
+        v-show="detailsTotal>0"
+        :total="detailsTotal"
+        :page.sync="userform.pageNum"
+        :limit.sync="userform.pageSize"
+        @pagination="viewTeam(userform.id)"
+      />
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="detailsOpen = false">确 定</el-button>
+        <el-button @click="detailsOpen = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser ,resetBalance, balanceUser} from "@/api/business/user";
+import { listUser, getUser, delUser, addUser, updateUser ,resetBalance, balanceUser,nodeUser} from "@/api/business/user";
 import { listLevel } from "@/api/business/level";
 import { dateFormat } from '@/utils/auth'
 
@@ -433,6 +488,15 @@ export default {
       // 增减余额表单数据
       balanceForm: {
         remark:'',
+      },
+      detailList:[],//详情数据
+      detailsOpen: false,//上下级详情弹窗
+      detailsTotal: 0,
+      // 用户详情数据
+      userform: {
+        pageNum: 1,
+        pageSize: 10,
+        userAgentLevel: "1",
       },
     };
   },
@@ -674,6 +738,18 @@ export default {
         }
       });
     },
+    goPages(data,type){
+      this.$router.push({path:'/trade/' + type ,query:{userName: data.userName}})
+    },
+    // 查看团队
+    viewTeam(id){
+      this.userform["id"] = id
+      nodeUser(this.userform).then(response => {
+        this.detailList = response.rows;
+        this.detailsTotal = response.total;
+        this.detailsOpen = true
+      });
+    }
   }
 };
 </script>

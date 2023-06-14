@@ -60,3 +60,12 @@ export function balanceUser(data) {
     data: data
   })
 }
+
+// 查询会员列表详情
+export function nodeUser(query) {
+  return request({
+    url: '/business/user/node',
+    method: 'get',
+    params: query
+  })
+}

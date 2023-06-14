@@ -1,4 +1,5 @@
 <template>
+  <!-- 提现记录 -->
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="订单号" prop="orderNo">
@@ -336,8 +337,11 @@ export default {
     };
   },
   created() {
-    this.getList();
     this.getDefaultTime()
+    if(this.$route.query.userName){
+      this.queryParams.userName = this.$route.query.userName
+    }
+    this.getList();
   },
   methods: {
     /** 查询提现列表列表 */
