@@ -118,7 +118,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入用户名" />
+          <el-input :disabled="true" v-model="form.userName" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item label="触发单数" prop="triggerNum">
           <el-input v-model="form.triggerNum" placeholder="请输入触发单数" />
