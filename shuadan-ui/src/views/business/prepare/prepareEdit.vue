@@ -21,25 +21,25 @@
             <el-form-item :label="'触发数量[今日已抢' + 7 + '单]'" prop="userName">
                 <el-input
                 class="margin-top10"
-                v-model="queryParams.userName"
-                placeholder="请输入用户名"
+                v-model="queryParams.triggerNum"
+                placeholder="请输入触发单数"
                 clearable
                 @keyup.enter.native="handleQuery"
                 />
             </el-form-item>
-            <el-form-item label="提示文本" prop="userName">
+            <el-form-item label="提示文本" prop="promptText">
                 <el-input
                 class="margin-top10"
-                v-model="queryParams.userName"
-                placeholder="请输入用户名"
+                v-model="queryParams.promptText"
+                placeholder="请输入提示文本"
                 clearable
                 @keyup.enter.native="handleQuery"
                 />
             </el-form-item>
-            <el-form-item label="佣金倍数" prop="userName">
+            <el-form-item label="佣金倍数" prop="commissionMul">
                 <el-input
                 class="margin-top10"
-                v-model="queryParams.userName"
+                v-model="queryParams.commissionMul"
                 placeholder="请输入佣金倍数"
                 clearable
                 @keyup.enter.native="handleQuery"
@@ -78,7 +78,7 @@
             </el-form-item>
             
             <div class="pre-delivery-foot">
-                <el-button type="primary">确 定</el-button>
+                <el-button type="primary" @click="addPrepare">确 定</el-button>
                 <el-button>取 消</el-button>
             </div>
         </el-form>
@@ -152,9 +152,8 @@ export default {
             queryList: [],
             resourceDomain: {},
             queryParams: {
-                pageNum: 1,
-                pageSize: 10,
                 userName: null,
+                goodsSelect:''
             },
             goodsList:[],//商品列表
             addList:[],//添加数据
@@ -225,6 +224,7 @@ export default {
         },
         // 添加
         addGoods(data){
+            this.queryOpen = false
             if (this.addList.length <= 0) {
                 this.addList.push(data)
                 return;
@@ -239,7 +239,6 @@ export default {
             if (!flag) {
                 this.addList.push(data)
             }
-            this.queryOpen = false
         },
         // 删除
         delGoods(id){
@@ -248,6 +247,17 @@ export default {
                     this.addList.splice(index,1)
                 }
             })
+        },
+        // 提交预派送
+        addPrepare(){
+            let str = ''
+            this.addList.forEach(item => {
+                str += item.id + ":" + item.addNo + ','
+            })
+            this.queryParams.goodsSelect = str.substring(0 ,str.length - 1)
+            addPrepare(this.queryParams).then(response => {
+                this.$modal.msgSuccess("修改成功");
+            });
         }
     },
     components: { router }
