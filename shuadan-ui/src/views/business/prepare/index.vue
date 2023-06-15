@@ -115,35 +115,34 @@
     />
 
     <!-- 添加或修改预派送列表对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="userName">
           <el-input :disabled="true" v-model="form.userName" placeholder="请输入用户名" />
         </el-form-item>
         <el-form-item label="触发单数" prop="triggerNum">
-          <el-input v-model="form.triggerNum" placeholder="请输入触发单数" />
+          <el-input :disabled="true" v-model="form.triggerNum" placeholder="请输入触发单数" />
         </el-form-item>
         <el-form-item label="商品id" prop="goodsId">
-          <el-input v-model="form.goodsId" placeholder="请输入商品id" />
+          <!-- <el-input v-model="form.goodsId" placeholder="请输入商品id" /> -->
+          <el-select v-model="form.goodsId" placeholder="请输入商品id" style="width:880px;" filterable>
+            <el-option
+              v-for="item in goodsList"
+              :key="item.id"
+              :label="'【' + item.id  + '】¥' + item.goodsPrice + ' - ' + item.goodsName"
+              :value="item.id">
+              </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="商品数量" prop="goodsCount">
           <el-input v-model="form.goodsCount" placeholder="请输入商品数量" />
         </el-form-item>
-        <el-form-item label="批次" prop="preBatch">
-          <el-input v-model="form.preBatch" placeholder="请输入批次" />
-        </el-form-item>
-        <el-form-item label="提示文本" prop="promptText">
-          <el-input v-model="form.promptText" placeholder="请输入提示文本" />
-        </el-form-item>
         <el-form-item label="佣金倍数" prop="commissionMul">
           <el-input v-model="form.commissionMul" placeholder="请输入佣金倍数" />
         </el-form-item>
-        <el-form-item label="订单总额" prop="orderAmount">
-          <el-input v-model="form.orderAmount" placeholder="请输入订单总额" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
+        <!-- <el-form-item label="提示文本" prop="promptText">
+          <el-input v-model="form.promptText" placeholder="请输入提示文本" />
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -155,6 +154,7 @@
 
 <script>
 import { listPrepare, getPrepare, delPrepare, addPrepare, updatePrepare } from "@/api/business/prepare";
+import { listGoods } from "@/api/business/goods";
 
 export default {
   name: "Prepare",
@@ -191,11 +191,13 @@ export default {
         userName: [
           { required: true, message: "用户名不能为空", trigger: "blur" }
         ],
-      }
+      },
+      goodsList:[],//商品列表
     };
   },
   created() {
     this.getList();
+    this.getGoods()
   },
   methods: {
     /** 查询预派送列表列表 */
@@ -267,10 +269,17 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      let data = {}
+      data = {
+        id: this.form.id,
+        goodsId: this.form.goodsId,
+        goodsCount: this.form.goodsCount,
+        commissionMul: this.form.commissionMul,
+      }
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updatePrepare(this.form).then(response => {
+            updatePrepare(data).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
@@ -303,6 +312,24 @@ export default {
     },
     handleAddGoods() {
       this.$tab.openPage("编辑预派送", '/trade/prepare-edit/index/0');
+    },
+    /** 查询商品列表列表 */
+    getGoods() {
+        this.goodsList = []
+        let obj = {}
+        listGoods({
+            pageNum: 1,
+            pageSize: 10000,
+        }).then(response => {
+          response.rows.forEach(item => {
+              obj = {
+                  id: item.id,
+                  goodsName: item.goodsName,
+                  goodsPrice: item.goodsPrice,
+              }
+              this.goodsList.push(obj)
+          });
+        });
     },
   }
 };

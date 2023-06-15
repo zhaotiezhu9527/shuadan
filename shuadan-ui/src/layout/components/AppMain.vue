@@ -2,10 +2,14 @@
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
       <!-- 去掉所有缓存 -->
-      <!-- <keep-alive :include="cachedViews">
+      <!-- <div v-if="true">
+        <keep-alive :include="cachedViews">
+          <router-view v-if="!$route.meta.link" :key="key" />
+        </keep-alive>
+      </div> -->
+      <div>
         <router-view v-if="!$route.meta.link" :key="key" />
-      </keep-alive> -->
-        <router-view v-if="!$route.meta.link" :key="key" />
+      </div>
     </transition>
     <iframe-toggle />
   </section>

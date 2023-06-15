@@ -85,6 +85,34 @@
       </el-card>
     </div>
     <el-dialog title="商品详情" :visible.sync="queryOpen" width="1000px" append-to-body>
+        <el-form :model="listParams" ref="queryForm" size="small" :inline="true" label-width="68px">
+            <el-form-item label="商品名称" prop="goodsName">
+                <el-input
+                v-model="listParams.goodsName"
+                placeholder="请输入商品名称"
+                clearable
+                />
+                
+            </el-form-item>
+            <el-form-item label="最小金额" prop="minPrice">
+                <el-input
+                v-model="listParams.minPrice"
+                placeholder="请输入最小金额"
+                clearable
+                />
+            </el-form-item>
+            <el-form-item label="最大金额" prop="maxPrice">
+                <el-input
+                v-model="listParams.maxPrice"
+                placeholder="请输入最大金额"
+                clearable
+                />
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
+                <el-button icon="el-icon-refresh" size="mini" @click="resetQueryList">重置</el-button>
+            </el-form-item>
+        </el-form>
       <el-table :data="goodsList">
         <el-table-column label="商品id" prop="id" />
         <el-table-column label="商品名称" prop="goodsName" width="400"/>
@@ -157,6 +185,13 @@ export default {
             },
             goodsList:[],//商品列表
             addList:[],//添加数据
+            listParams: {
+                goodsName: "", 
+                minPrice: "",
+                maxPrice: "",
+                pageNum: 1,
+                pageSize: 10000,
+            },//列表查询参数
         };
     },
     created() {
@@ -169,10 +204,7 @@ export default {
             this.loading = true;
             this.goodsList = []
             let obj = {}
-            listGoods({
-                pageNum: 1,
-                pageSize: 10000,
-            }).then(response => {
+            listGoods(this.listParams).then(response => {
                 response.rows.forEach(item => {
                     obj = {
                         id: item.id,
@@ -258,6 +290,9 @@ export default {
             addPrepare(this.queryParams).then(response => {
                 this.$modal.msgSuccess("修改成功");
             });
+        },
+        resetQueryList(){
+
         }
     },
     components: { router }
