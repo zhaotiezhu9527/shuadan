@@ -1,5 +1,7 @@
 package com.juhai.web.controller.business;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -60,38 +62,39 @@ public class PrepareController extends BaseController
     {
         startPage();
         List<Prepare> list = prepareService.selectPrepareList(prepare);
-        List<String> users = list.stream().map(Prepare::getUserName).collect(Collectors.toList());
-        List<String> preBatchs = list.stream().map(Prepare::getPreBatch).collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(list)) {
+            List<String> users = list.stream().map(Prepare::getUserName).collect(Collectors.toList());
+            List<String> preBatchs = list.stream().map(Prepare::getPreBatch).collect(Collectors.toList());
 
-        // 查询今日完成单数
-        Date now = new Date();
-        List<OrderCount> orderCounts = orderCountService.list(
-                new LambdaQueryWrapper<OrderCount>()
-                        .in(OrderCount::getUserName, users)
-                        .eq(OrderCount::getToday, now)
-        );
-        Map<String, OrderCount> orderCountMap = orderCounts.stream().collect(Collectors.toMap(OrderCount::getUserName, e -> e));
+            // 查询今日完成单数
+            Date now = new Date();
+            List<OrderCount> orderCounts = orderCountService.list(
+                    new LambdaQueryWrapper<OrderCount>()
+                            .in(OrderCount::getUserName, users)
+                            .eq(OrderCount::getToday, DateUtil.formatDate(now))
+            );
+            Map<String, OrderCount> orderCountMap = orderCounts.stream().collect(Collectors.toMap(OrderCount::getUserName, e -> e));
 
-        // 查询商品信息
-        List<Goods> goodsList = goodsService.list();
-        Map<Long, Goods> goodsMap = goodsList.stream().collect(Collectors.toMap(Goods::getId, e -> e));
+            // 查询商品信息
+            List<Goods> goodsList = goodsService.list();
+            Map<Long, Goods> goodsMap = goodsList.stream().collect(Collectors.toMap(Goods::getId, e -> e));
 
-        // 查询批次信息
-        List<Prepare> preBatchList = prepareService.list(new LambdaQueryWrapper<Prepare>().in(Prepare::getPreBatch, preBatchs));
-        Map<String, BigDecimal> orderAmountMap = new HashMap<>();
-        for (Prepare temp : preBatchList) {
-            BigDecimal bigDecimal = orderAmountMap.getOrDefault(temp.getPreBatch(), new BigDecimal(0));
-            orderAmountMap.put(temp.getPreBatch(), NumberUtil.add(bigDecimal, temp.getOrderAmount()));
+            // 查询批次信息
+            List<Prepare> preBatchList = prepareService.list(new LambdaQueryWrapper<Prepare>().in(Prepare::getPreBatch, preBatchs));
+            Map<String, BigDecimal> orderAmountMap = new HashMap<>();
+            for (Prepare temp : preBatchList) {
+                BigDecimal bigDecimal = orderAmountMap.getOrDefault(temp.getPreBatch(), new BigDecimal(0));
+                orderAmountMap.put(temp.getPreBatch(), NumberUtil.add(bigDecimal, temp.getOrderAmount()));
+            }
+
+
+            for (Prepare temp : list) {
+                temp.setGoods(goodsMap.get(temp.getGoodsId()));
+                OrderCount orderCount = orderCountMap.get(temp.getUserName());
+                temp.setFinishCount(orderCount == null ? 0 : orderCount.getOrderCount());
+                temp.setBatchOrderAmount(orderAmountMap.get(temp.getPreBatch()));
+            }
         }
-
-
-        for (Prepare temp : list) {
-            temp.setGoods(goodsMap.get(temp.getGoodsId()));
-            OrderCount orderCount = orderCountMap.get(temp.getUserName());
-            temp.setFinishCount(orderCount == null ? 0 : orderCount.getOrderCount());
-            temp.setBatchOrderAmount(orderAmountMap.get(temp.getPreBatch()));
-        }
-
         return getDataTable(list);
     }
 
@@ -214,5 +217,19 @@ public class PrepareController extends BaseController
     {
 
         return toAjax(prepareService.deletePrepareByIds(ids));
+    }
+
+
+    @PreAuthorize("@ss.hasPermi('business:prepare:query')")
+    @GetMapping(value = "/getNewOne/{userName}")
+    public AjaxResult getNewOne(@PathVariable("userName") String userName)
+    {
+
+        OrderCount one = orderCountService.getOne(
+                new LambdaQueryWrapper<OrderCount>()
+                        .eq(OrderCount::getUserName, userName)
+                        .eq(OrderCount::getToday, DateUtil.formatDate(new Date()))
+        );
+        return success(one == null ? 0 : one.getOrderCount());
     }
 }

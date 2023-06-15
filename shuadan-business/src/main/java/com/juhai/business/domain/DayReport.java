@@ -34,9 +34,8 @@ public class DayReport
     private String userName;
 
     /** 日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date today;
+    @Excel(name = "日期")
+    private String today;
 
     /** 充值量 */
     @Excel(name = "充值量")
