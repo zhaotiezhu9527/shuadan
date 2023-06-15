@@ -89,9 +89,9 @@ export default {
     }
   },
   created() {
-    // setInterval(() => {
-    //   this.getNotice();
-    // },10000)
+    setInterval(() => {
+      this.getNotice();
+    },15000)
   },
   methods: {
     toggleSideBar() {

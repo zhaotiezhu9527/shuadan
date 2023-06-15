@@ -72,7 +72,7 @@
 
     <el-table v-loading="loading" :data="goodsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" width="40"/>
+      <el-table-column label="id" align="center" prop="id" width="65"/>
       <el-table-column label="商品名称" align="center" prop="goodsName" width="300"/>
       <el-table-column label="商品价格" align="center" prop="goodsPrice">
         <template slot-scope="scope">
@@ -134,7 +134,20 @@
         <el-form-item label="商品名称" prop="goodsName">
           <el-input v-model="form.goodsName" placeholder="请输入商品名称" />
         </el-form-item>
-        <el-form-item label="商品价格" prop="goodsPrice">
+        <el-form-item label="专区" prop="areaId">
+          <el-select v-model="form.areaId" placeholder="请选择">
+            <el-option
+              v-for="item in areaList"
+              :key="item.id"
+              :label="item.areaName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="店铺名称" prop="shopName">
+          <el-input v-model="form.shopName" placeholder="请输入商店名称" />
+        </el-form-item>
+        <el-form-item label="商品单价" prop="goodsPrice">
           <el-input v-model="form.goodsPrice" placeholder="请输入商品价格" />
         </el-form-item>
         <el-form-item label="商品图片" prop="goodsImg">
@@ -150,19 +163,8 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
         </el-form-item>
-        <el-form-item label="专区" prop="areaId">
-          <el-select v-model="form.areaId" placeholder="请选择">
-            <el-option
-              v-for="item in areaList"
-              :key="item.id"
-              :label="item.areaName"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="店铺名称" prop="shopName">
-          <el-input v-model="form.shopName" placeholder="请输入商店名称" />
-        </el-form-item>
+        
+       
         <el-form-item label="商品详情" prop="goodsDetail">
           <el-input v-model="form.goodsDetail" type="textarea" placeholder="请输入内容" />
         </el-form-item>
