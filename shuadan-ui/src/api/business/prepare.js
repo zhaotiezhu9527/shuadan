@@ -42,3 +42,11 @@ export function delPrepare(id) {
     method: 'delete'
   })
 }
+
+// 查询预派送发送详细
+export function getPrepareNewOne(userName) {
+  return request({
+    url: '/business/prepare/getNewOne/' + userName,
+    method: 'get'
+  })
+}

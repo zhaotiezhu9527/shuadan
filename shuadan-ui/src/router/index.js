@@ -169,10 +169,10 @@ export const dynamicRoutes = [
     permissions: ['business:prepare:edit'],
     children: [
       {
-        path: 'index/:tableId(\\d+)',
+        path: 'index',
         component: () => import('@/views/business/prepare/prepareEdit'),
         name: 'prepareEdit',
-        meta: { title: '修改生成配置', activeMenu: '/trade/prepare' }
+        meta: { title: '添加预派送配置', activeMenu: '/trade/prepare' }
       }
     ]
   }

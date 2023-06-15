@@ -14,11 +14,12 @@
                 class="margin-top10"
                 v-model="queryParams.userName"
                 placeholder="请输入用户名"
+                @blur="getPrepareNewOneList"
                 clearable
                 @keyup.enter.native="handleQuery"
                 />
             </el-form-item>
-            <el-form-item :label="'触发数量[今日已抢' + 7 + '单]'" prop="userName">
+            <el-form-item :label="'触发数量[今日已抢' + queryParams.Num + '单]'" prop="userName">
                 <el-input
                 class="margin-top10"
                 v-model="queryParams.triggerNum"
@@ -148,7 +149,7 @@
 </template>
 
 <script>
-import { getPrepare, addPrepare, updatePrepare } from "@/api/business/prepare";
+import { getPrepare, addPrepare, updatePrepare,getPrepareNewOne } from "@/api/business/prepare";
 import { listGoods } from "@/api/business/goods";
 import Cookies from "js-cookie";
 import router from "../../../router";
@@ -181,6 +182,7 @@ export default {
             resourceDomain: {},
             queryParams: {
                 userName: null,
+                Num:0,
                 goodsSelect:''
             },
             goodsList:[],//商品列表
@@ -197,6 +199,11 @@ export default {
     created() {
         this.getList();
         this.getCookie();
+        console.log(this.$route.query.userName)
+        this.queryParams.userName = this.$route.query.userName
+        if(this.queryParams.userName){
+            this.getPrepareNewOneList()
+        }
     },
     methods: {
         /** 查询商品列表列表 */
@@ -292,7 +299,19 @@ export default {
             });
         },
         resetQueryList(){
-
+            this.listParams =  {
+                goodsName: "", 
+                minPrice: "",
+                maxPrice: "",
+                pageNum: 1,
+                pageSize: 10000,
+            }
+        },
+        // 查询预派送新增列表
+        getPrepareNewOneList(){
+            getPrepareNewOne(this.queryParams.userName).then(response => {
+                this.queryParams.Num = response.data
+            });
         }
     },
     components: { router }

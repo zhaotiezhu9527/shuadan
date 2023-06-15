@@ -311,7 +311,10 @@ export default {
       }, `prepare_${new Date().getTime()}.xlsx`)
     },
     handleAddGoods() {
-      this.$tab.openPage("编辑预派送", '/trade/prepare-edit/index/0');
+      const obj = { path: '/trade/prepare-edit/index' , name: 'prepareEdit' };
+      this.$tab.closePage(obj).then(() => {
+        this.$router.push({path:'/trade/prepare-edit/index'})
+      })
     },
     /** 查询商品列表列表 */
     getGoods() {

@@ -224,6 +224,12 @@
             v-hasPermi="['business:user:list']"
             @click="viewTeam(scope.row.id)"
           >查看团队</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            v-hasPermi="['business:user:list']"
+            @click="goPrepare(scope.row)"
+          >预派送商品</el-button>
           <!-- <el-button
             size="mini"
             type="text"
@@ -750,7 +756,19 @@ export default {
       });
     },
     goPages(data,type){
-      this.$router.push({path:'/trade/' + type ,query:{userName: data.userName}})
+      let typeName = ''
+      if(type === 'account'){
+        typeName = 'Account'
+      }else if(type === 'deposit'){
+        typeName = 'Deposit'
+      }else if(type === 'withdraw'){
+        typeName = 'Withdraw'
+      }
+      const obj = { path: '/trade/' + type, name: typeName };
+      this.$tab.closePage(obj).then(() => {
+        this.$router.push({path:'/trade/' + type ,query:{userName: data.userName}})
+      })
+      
     },
     // 查看团队
     viewTeam(id){
@@ -760,7 +778,13 @@ export default {
         this.detailsTotal = response.total;
         this.detailsOpen = true
       });
-    }
+    },
+    goPrepare(data){
+      const obj = { path: '/trade/prepare-edit/index' , name: 'prepareEdit' };
+      this.$tab.closePage(obj).then(() => {
+        this.$router.push({path:'/trade/prepare-edit/index' ,query:{userName: data.userName}})
+      })
+    },
   }
 };
 </script>
