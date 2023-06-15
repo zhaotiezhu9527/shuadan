@@ -199,7 +199,6 @@ export default {
     created() {
         this.getList();
         this.getCookie();
-        console.log(this.$route.query.userName)
         this.queryParams.userName = this.$route.query.userName
         if(this.queryParams.userName){
             this.getPrepareNewOneList()
@@ -263,7 +262,7 @@ export default {
         },
         // 添加
         addGoods(data){
-            this.queryOpen = false
+            // this.queryOpen = false
             if (this.addList.length <= 0) {
                 this.addList.push(data)
                 return;
@@ -295,7 +294,10 @@ export default {
             })
             this.queryParams.goodsSelect = str.substring(0 ,str.length - 1)
             addPrepare(this.queryParams).then(response => {
-                this.$modal.msgSuccess("修改成功");
+                if(response.code === 200){
+                    this.$modal.msgSuccess(response.msg);
+                    this.$router.push({path:'/trade/prepare'})
+                }
             });
         },
         resetQueryList(){
