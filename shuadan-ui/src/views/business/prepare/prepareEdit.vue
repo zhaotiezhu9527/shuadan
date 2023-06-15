@@ -296,7 +296,10 @@ export default {
             addPrepare(this.queryParams).then(response => {
                 if(response.code === 200){
                     this.$modal.msgSuccess(response.msg);
-                    this.$router.push({path:'/trade/prepare'})
+                    const obj = { path: '/trade/prepare-edit/index' , name: 'prepareEdit' };
+                    this.$tab.closePage(obj).then(() => {
+                        this.$router.push({path:'/trade/prepare'})
+                    })
                 }
             });
         },
