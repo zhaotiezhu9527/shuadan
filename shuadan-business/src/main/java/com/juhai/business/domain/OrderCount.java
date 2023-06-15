@@ -33,9 +33,8 @@ public class OrderCount extends BaseEntity
     private String userName;
 
     /** 今日时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "今日时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private Date today;
+    @Excel(name = "今日时间")
+    private String today;
 
     /** 今日订单数 */
     @Excel(name = "今日订单数")
@@ -59,12 +58,12 @@ public class OrderCount extends BaseEntity
     {
         return userName;
     }
-    public void setToday(Date today) 
+    public void setToday(String today)
     {
         this.today = today;
     }
 
-    public Date getToday() 
+    public String getToday()
     {
         return today;
     }

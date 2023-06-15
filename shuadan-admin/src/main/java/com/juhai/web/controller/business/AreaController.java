@@ -1,31 +1,24 @@
 package com.juhai.web.controller.business;
 
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-
 import cn.hutool.core.collection.CollStreamUtil;
-import com.juhai.business.domain.Goods;
+import cn.hutool.core.collection.CollUtil;
+import com.juhai.business.domain.Area;
 import com.juhai.business.domain.Level;
+import com.juhai.business.service.IAreaService;
 import com.juhai.business.service.ILevelService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.juhai.common.annotation.Log;
 import com.juhai.common.core.controller.BaseController;
 import com.juhai.common.core.domain.AjaxResult;
-import com.juhai.common.enums.BusinessType;
-import com.juhai.business.domain.Area;
-import com.juhai.business.service.IAreaService;
-import com.juhai.common.utils.poi.ExcelUtil;
 import com.juhai.common.core.page.TableDataInfo;
+import com.juhai.common.enums.BusinessType;
+import com.juhai.common.utils.poi.ExcelUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 商品分类Controller
@@ -52,14 +45,14 @@ public class AreaController extends BaseController
     {
         startPage();
         List<Area> list = areaService.selectAreaList(area);
+        if (CollUtil.isNotEmpty(list)) {
+            List<Level> levels = levelService.list();
+            Map<Long, Level> levelMap = CollStreamUtil.toMap(levels, Level::getId, e -> e);
 
-        List<Level> levels = levelService.list();
-        Map<Long, Level> levelMap = CollStreamUtil.toMap(levels, Level::getId, e -> e);
-
-        for (Area temp : list) {
-            temp.setLevel(levelMap.get(temp.getLevelId()));
+            for (Area temp : list) {
+                temp.setLevel(levelMap.get(temp.getLevelId()));
+            }
         }
-
         return getDataTable(list);
     }
 

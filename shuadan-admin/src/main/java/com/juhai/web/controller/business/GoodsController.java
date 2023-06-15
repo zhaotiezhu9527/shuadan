@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.hutool.core.collection.CollStreamUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.juhai.business.domain.Area;
 import com.juhai.business.service.IAreaService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,12 +53,15 @@ public class GoodsController extends BaseController
         startPage();
         List<Goods> list = goodsService.selectGoodsList(goods);
 
-        List<Area> areas = areaService.list();
-        Map<Long, Area> areaMap = CollStreamUtil.toMap(areas, Area::getId, e -> e);
+        if (CollUtil.isNotEmpty(list)) {
+            List<Area> areas = areaService.list();
+            Map<Long, Area> areaMap = CollStreamUtil.toMap(areas, Area::getId, e -> e);
 
-        for (Goods temp : list) {
-            temp.setArea(areaMap.get(temp.getAreaId()));
+            for (Goods temp : list) {
+                temp.setArea(areaMap.get(temp.getAreaId()));
+            }
         }
+
         return getDataTable(list);
     }
 

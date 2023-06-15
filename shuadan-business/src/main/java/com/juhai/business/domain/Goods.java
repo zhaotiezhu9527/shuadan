@@ -90,4 +90,10 @@ public class Goods
 
     @TableField(exist = false)
     private Area area;
+
+    @TableField(exist = false)
+    private Double minPrice;
+
+    @TableField(exist = false)
+    private Double maxPrice;
 }

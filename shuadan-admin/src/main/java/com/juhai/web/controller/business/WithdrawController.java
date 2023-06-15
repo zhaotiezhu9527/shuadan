@@ -152,7 +152,7 @@ public class WithdrawController extends BaseController
 
             DayReport dayReport = new DayReport();
             dayReport.setUserName(user.getUserName());
-            dayReport.setToday(now);
+            dayReport.setToday(DateUtil.formatDate(now));
             dayReport.setWithdraw(withdraw.getOptAmount());
             dayReport.setUserAgent(user.getUserAgent());
             dayReport.setUserAgentNode(user.getUserAgentNode());

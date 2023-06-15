@@ -317,7 +317,7 @@ public class UserController extends BaseController
             // 记录报表
             DayReport dayReport = new DayReport();
             dayReport.setUserName(user.getUserName());
-            dayReport.setToday(new Date());
+            dayReport.setToday(DateUtil.formatDate(now));
             dayReport.setDeposit(money);
             dayReport.setWithdraw(new BigDecimal("0"));
             dayReport.setBet(new BigDecimal("0"));
