@@ -1,42 +1,32 @@
 package com.juhai.web.controller.business;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.NumberUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.juhai.business.domain.Account;
 import com.juhai.business.domain.DayReport;
 import com.juhai.business.domain.User;
-import com.juhai.business.service.IAccountService;
-import com.juhai.business.service.IDayReportService;
-import com.juhai.business.service.IUserService;
-import com.juhai.web.controller.business.request.WithdrawCheckRequest;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.juhai.business.domain.Withdraw;
+import com.juhai.business.service.*;
+import com.juhai.common.annotation.Anonymous;
 import com.juhai.common.annotation.Log;
 import com.juhai.common.core.controller.BaseController;
 import com.juhai.common.core.domain.AjaxResult;
-import com.juhai.common.enums.BusinessType;
-import com.juhai.business.domain.Withdraw;
-import com.juhai.business.service.IWithdrawService;
-import com.juhai.common.utils.poi.ExcelUtil;
 import com.juhai.common.core.page.TableDataInfo;
+import com.juhai.common.enums.BusinessType;
+import com.juhai.common.utils.poi.ExcelUtil;
+import com.juhai.web.controller.business.request.WithdrawCheckRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 提现列表Controller
@@ -59,6 +49,9 @@ public class WithdrawController extends BaseController
 
     @Autowired
     private IAccountService accountService;
+
+    @Autowired
+    private IDepositService depositService;
 
     /**
      * 查询提现列表列表
@@ -193,5 +186,13 @@ public class WithdrawController extends BaseController
             accountService.insertAccount(account);
         }
         return toAjax(true);
+    }
+
+    @Anonymous
+    @GetMapping(value = "/getNotice")
+    public AjaxResult getNotice()
+    {
+        long count = withdrawService.count(new LambdaQueryWrapper<Withdraw>().eq(Withdraw::getStatus, 0));
+        return success(count > 0);
     }
 }
