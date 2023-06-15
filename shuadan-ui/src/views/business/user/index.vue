@@ -287,20 +287,23 @@
         </el-form-item>
         <el-form-item label="用户等级" prop="levelId">
           <el-select v-model="form.levelId" placeholder="请选择">
-          <el-option
-              v-for="item in levelList"
-              :key="item.id"
-              :label="item.levelName"
-              :value="item.id">
-            </el-option>
-        </el-select>
+            <el-option
+                v-for="item in levelList"
+                :key="item.id"
+                :label="item.levelName"
+                :value="item.id">
+              </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="累加订单" prop="updateOrder">
+          <el-select v-model="form.updateOrder" placeholder="请选择">
+            <el-option label="是" :value="0"></el-option>
+            <el-option label="否" :value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remake">
           <el-input v-model="form.remake" placeholder="请输入备注" />
         </el-form-item>
-        <!-- <el-form-item label="是否累加订单(0:是 1:否)" prop="updateOrder">
-          <el-input v-model="form.updateOrder" placeholder="请输入是否累加订单(0:是 1:否)" />
-        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -613,6 +616,7 @@ export default {
         creditValue: this.form.creditValue,
         levelId: this.form.levelId,
         remake: this.form.remake,
+        updateOrder: this.form.updateOrder,
       }
       this.$refs["form"].validate(valid => {
         if (valid) {
