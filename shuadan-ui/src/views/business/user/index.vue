@@ -334,7 +334,7 @@
         <el-button @click="addCancel">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 修改余额对话框 -->
+    <!-- 重置余额对话框 -->
     <el-dialog title="重置余额" :visible.sync="resetBalanceStatus" width="500px" append-to-body>
       <el-form ref="resetBalanceForm" :model="resetBalanceForm" :rules="rules" label-width="120px">
         <el-form-item label="用户名">
@@ -346,7 +346,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="balanceUpdateSub">确 定</el-button>
-        <el-button @click="resetBalanceForm = false">取 消</el-button>
+        <el-button @click="resetBalanceStatus = false">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 增减余额对话框 -->
