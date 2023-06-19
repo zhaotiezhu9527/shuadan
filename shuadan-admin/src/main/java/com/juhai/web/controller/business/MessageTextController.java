@@ -78,6 +78,8 @@ public class MessageTextController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody MessageText messageText)
     {
+        messageText.setCreateBy(getUsername());
+        messageText.setCreateTime(new Date());
         return toAjax(messageTextService.insertMessageText(messageText));
     }
 
@@ -89,6 +91,7 @@ public class MessageTextController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody MessageText messageText)
     {
+        messageText.setUpdateBy(getUsername());
         messageText.setUpdateTime(new Date());
         return toAjax(messageTextService.updateMessageText(messageText));
     }

@@ -1,5 +1,6 @@
 package com.juhai.web.controller.business;
 
+import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -77,6 +78,9 @@ public class CustomerServiceController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody CustomerService customerService)
     {
+        customerService.setCreateBy(getUsername());
+        customerService.setStatus(0L);
+        customerService.setCreateTime(new Date());
         return toAjax(customerServiceService.insertCustomerService(customerService));
     }
 
@@ -88,6 +92,8 @@ public class CustomerServiceController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody CustomerService customerService)
     {
+        customerService.setUpdateBy(getUsername());
+        customerService.setUpdateTime(new Date());
         return toAjax(customerServiceService.updateCustomerService(customerService));
     }
 

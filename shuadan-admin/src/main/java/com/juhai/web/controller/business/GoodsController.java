@@ -1,5 +1,6 @@
 package com.juhai.web.controller.business;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -103,6 +104,9 @@ public class GoodsController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody Goods goods)
     {
+        goods.setCreateBy(getUsername());
+        goods.setStatus(0L);
+        goods.setCreateTime(new Date());
         return toAjax(goodsService.insertGoods(goods));
     }
 
