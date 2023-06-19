@@ -2,6 +2,8 @@ package com.juhai.web.controller.business;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,6 +91,41 @@ public class OrderController extends BaseController
     public AjaxResult edit(@RequestBody Order order)
     {
         return toAjax(orderService.updateOrder(order));
+    }
+
+    /**
+     * 修改订单金额
+     */
+    @PreAuthorize("@ss.hasPermi('business:order:editAmount')")
+    @Log(title = "修改订单金额", businessType = BusinessType.UPDATE)
+    @PutMapping("/editAmount")
+    public AjaxResult editAmount(@RequestBody Order order)
+    {
+        if (order.getOrderAmount().doubleValue() <= 0) {
+            return AjaxResult.error("请正确输入金额");
+        }
+        boolean update = orderService.update(
+                new UpdateWrapper<Order>().lambda()
+                        .eq(Order::getId, order.getId())
+                        .set(Order::getOrderAmount, order.getOrderAmount())
+        );
+        return toAjax(update);
+    }
+
+    /**
+     * 订单取消
+     */
+    @PreAuthorize("@ss.hasPermi('business:order:cancel')")
+    @Log(title = "订单取消", businessType = BusinessType.UPDATE)
+    @PutMapping("/cancel")
+    public AjaxResult cancel(@RequestBody Order order)
+    {
+        boolean update = orderService.update(
+                new UpdateWrapper<Order>().lambda()
+                        .eq(Order::getId, order.getId())
+                        .set(Order::getStatus, 3)
+        );
+        return toAjax(update);
     }
 
     /**
