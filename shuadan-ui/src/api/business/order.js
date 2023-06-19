@@ -42,3 +42,21 @@ export function delOrder(id) {
     method: 'delete'
   })
 }
+
+// 修改订单金额
+export function editAmount(data) {
+  return request({
+    url: '/business/order/editAmount',
+    method: 'put',
+    data: data
+  })
+}
+
+// 取消订单
+export function cancelOrder(data) {
+  return request({
+    url: '/business/order/cancel',
+    method: 'put',
+    data: data
+  })
+}

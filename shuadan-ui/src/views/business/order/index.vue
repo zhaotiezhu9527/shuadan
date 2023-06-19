@@ -23,6 +23,7 @@
           <el-option value="0" label="待支付"></el-option>
           <el-option value="1" label="已完成"></el-option>
           <el-option value="2" label="冻结中"></el-option>
+          <el-option value="3" label="已取消"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="订单时间" prop="orderTime">
@@ -97,13 +98,14 @@
       <el-table-column label="昵称" align="center" prop="nickName" />
       <el-table-column label="商品价格" align="center" prop="goodsPrice" />
       <el-table-column label="交易数量" align="center" prop="goodsCount" />
-      <el-table-column label="交易金额" align="center" prop="orderAmount" />
+      <el-table-column label="订单金额" align="center" prop="orderAmount" />
       <el-table-column label="佣金" align="center" prop="commission" />
       <el-table-column label="交易状态" align="center" prop="status">
         <template slot-scope="scope">
           <div v-if="scope.row.status === 0">待支付</div>
           <div v-else-if="scope.row.status === 1">已完成</div>
           <div v-else-if="scope.row.status === 2">冻结中</div>
+          <div v-else-if="scope.row.status === 3">已取消</div>
           <div v-else> - </div>
         </template>
       </el-table-column>
@@ -122,6 +124,20 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:order:edit']"
           >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleUpdateBalance(scope.row)"
+            v-hasPermi="['business:order:editAmount']"
+            v-if="scope.row.status === 0"
+          >修改订单金额</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            @click="cancelOrder(scope.row)"
+            v-hasPermi="['business:order:cancel']"
+            v-if="scope.row.status === 0"
+          >取消订单</el-button>
           <el-button
             size="mini"
             type="text"
@@ -205,11 +221,26 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 修改交易余额对话框 -->
+    <el-dialog title="增减余额" :visible.sync="balanceOpen" width="500px" append-to-body>
+      <el-form ref="balanceform" :model="balanceForm" :rules="rules" label-width="80px">
+        <el-form-item label="用户名" prop="userName">
+          <el-input :disabled="true" v-model="balanceForm.userName" placeholder="请输入4-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="订单金额" prop="orderAmount">
+          <el-input v-model="balanceForm.orderAmount" placeholder="请输入金额" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="balanceSub">确 定</el-button>
+        <el-button @click="balanceOpen = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listOrder, getOrder, delOrder, addOrder, updateOrder } from "@/api/business/order";
+import { listOrder, getOrder, delOrder, addOrder, updateOrder,editAmount,cancelOrder } from "@/api/business/order";
 import { dateFormat } from '@/utils/auth'
 
 export default {
@@ -282,6 +313,14 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }]
+      },
+      // 是否显示修改余额弹出层
+      balanceOpen: false,
+      // 修改余额表单数据
+      balanceForm: {
+        orderAmount: '',
+        id:'',
+        userName: '',
       },
     };
   },
@@ -398,7 +437,36 @@ export default {
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.dateRange[0] = dateFormat("YYYY-mm-dd" , end) + ' 00:00:00'
       this.dateRange[1] = dateFormat("YYYY-mm-dd" , end) + ' 23:59:59'
-    }
+    },
+    // 修改订单金额
+    handleUpdateBalance(data){
+      this.balanceOpen = true;
+      this.balanceForm.userName = data.userName
+      this.balanceForm.id = data.id
+      this.balanceForm.orderAmount = data.orderAmount
+    },
+    // 修改余额提交方法
+    balanceSub(){
+      this.$refs["balanceform"].validate(valid => {
+        if (valid) {
+          editAmount(this.balanceForm).then(response => {
+            this.$modal.msgSuccess(response.msg);
+            this.balanceOpen = false;
+            this.getList();
+          });
+        }
+      });
+    },
+    /** 取消订单按钮操作 */
+    cancelOrder(row) {
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认取消编号为"' + ids + '"的订单？').then(function() {
+        return cancelOrder({id:ids});
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("操作成功");
+      }).catch(() => {});
+    },
   }
 };
 </script>
