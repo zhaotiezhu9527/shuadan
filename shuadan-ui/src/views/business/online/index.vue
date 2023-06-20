@@ -85,7 +85,7 @@
 import { listUser,userLogout} from "@/api/business/online";
 
 export default {
-  name: "User",
+  name: "Online",
   data() {
     return {
       // 遮罩层
@@ -158,28 +158,28 @@ export default {
     },
     // 预派送
     goPrepare(data){
-      const obj = { path: '/trade/prepare-edit/index' , name: 'prepareEdit' };
+      const obj = { path: '/user/online' , name: 'Online' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/prepare-edit/index' ,query:{userName: data.userName}})
       })
     },
     // 派送记录
     goPrepareList(data){
-      const obj = { path: '/trade/prepare' , name: 'Prepare' };
+      const obj = { path: '/user/online' , name: 'Online' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/prepare' ,query:{userName: data.userName}})
       })
     },
     // 跳进会员列表
     goUser(userName)  {
-      const obj = { path: '/user/user' , name: 'User' };
+      const obj = { path: '/user/online' , name: 'Online' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/user/user' ,query:{userName: userName}})
       })
     },
     // 跳转订单列表
     orderList(data){
-      const obj = { path: '/trade/order' , name: 'Order' };
+      const obj = { path: '/user/online' , name: 'Online' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/order' ,query:{userName: data.userName}})
       })
