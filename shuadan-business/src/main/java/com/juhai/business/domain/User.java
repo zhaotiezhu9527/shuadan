@@ -151,6 +151,42 @@ public class User extends BaseEntity
     @Excel(name = "推荐人数")
     private Long inviteCount;
 
+    /** 当前单数 **/
+    @TableField(exist = false)
+    private long orderCount;
+
+    /** 预派送信息 **/
+    @TableField(exist = false)
+    private long prepareCount;
+
+    /** 上级用户名 **/
+    @TableField(exist = false)
+    private String userAgentName;
+
+    public String getUserAgentName() {
+        return userAgentName;
+    }
+
+    public void setUserAgentName(String userAgentName) {
+        this.userAgentName = userAgentName;
+    }
+
+    public long getPrepareCount() {
+        return prepareCount;
+    }
+
+    public void setPrepareCount(long prepareCount) {
+        this.prepareCount = prepareCount;
+    }
+
+    public long getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(long orderCount) {
+        this.orderCount = orderCount;
+    }
+
     @TableField(exist = false)
     private int online;
 

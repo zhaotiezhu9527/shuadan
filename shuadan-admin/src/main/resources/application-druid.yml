@@ -92,3 +92,6 @@ spring:
               bucket-name: juhaijituan
               domain: https://juhaijituan.oss-ap-southeast-1.aliyuncs.com/
               base-path: sd/
+server:
+    servlet:
+        context-path: /

@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 会员列表Controller
@@ -67,6 +68,12 @@ public class UserController extends BaseController
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private IOrderCountService orderCountService;
+
+    @Autowired
+    private IPrepareService prepareService;
+
     /**
      * 查询会员列表列表
      */
@@ -93,6 +100,44 @@ public class UserController extends BaseController
 
         startPage();
         List<User> list = userService.selectUserList(user);
+        if (CollUtil.isNotEmpty(list)) {
+            List<String> userNames = list.stream().map(User::getUserName).collect(Collectors.toList());
+            Set<String> userAgentNames = list.stream().map(User::getUserAgent).collect(Collectors.toSet());
+
+            Date date = new Date();
+            // 查询今日订单单数信息
+            List<OrderCount> ordercounts = orderCountService.list(
+                    new LambdaQueryWrapper<OrderCount>()
+                            .eq(OrderCount::getToday, DateUtil.formatDate(date))
+                            .in(OrderCount::getUserName, userNames)
+            );
+            Map<String, Long> ordercountMap = ordercounts.stream().collect(Collectors.toMap(OrderCount::getUserName, OrderCount::getOrderCount));
+            // 查询预派送信息
+            List<Prepare> prepares = prepareService.list(
+                    new LambdaQueryWrapper<Prepare>()
+                            .eq(Prepare::getStatus, 0)
+                            .in(Prepare::getUserName, userNames)
+                            .orderByAsc(Prepare::getTriggerNum)
+            );
+            Map<String, Long> prepareMap = new HashMap<>();
+            for (Prepare prepare : prepares) {
+                if (prepareMap.containsKey(prepare.getUserName())) {
+                    continue;
+                }
+                prepareMap.put(prepare.getUserName(), prepare.getTriggerNum());
+            }
+            // 上级用户姓名
+            List<User> agentList = userService.list(new LambdaQueryWrapper<User>().in(User::getUserName, userAgentNames));
+            Map<String, User> agentRealName = agentList.stream().collect(Collectors.toMap(User::getUserName, user1 -> user1));
+
+            for (User temp : list) {
+                temp.setOrderCount(ordercountMap.getOrDefault(temp.getUserName(), 0L));
+                temp.setPrepareCount(prepareMap.getOrDefault(temp.getUserName(), 0L));
+                User agent = agentRealName.get(temp.getUserAgent());
+                temp.setUserAgentName(agent == null ? "" : agent.getRealName());
+            }
+        }
+
         return getDataTable(list);
     }
 
@@ -246,6 +291,16 @@ public class UserController extends BaseController
                         .eq(User::getId, user.getId())
                         .set(User::getBalance, user.getBalance())
         );
+        return AjaxResult.success();
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:user:logout')")
+    @Log(title = "【踢下线】", businessType = BusinessType.UPDATE)
+    @PostMapping("/logout")
+    public AjaxResult logout(@RequestBody User user)
+    {
+        redisTemplate.delete("user:login:token:" + user.getUserName());
+        redisTemplate.delete("user:online:token:" + user.getUserName());
         return AjaxResult.success();
     }
 
