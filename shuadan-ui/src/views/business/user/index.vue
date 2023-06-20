@@ -134,6 +134,7 @@
       <el-table-column label="上级代理" align="center" prop="userAgent">
         <template slot-scope="scope">
           <div class="blue-text" @click="handleUserAgent(scope.row.userAgent)">{{scope.row.userAgent}}</div>
+          <div>{{scope.row.userAgentName}}</div>
         </template>
       </el-table-column>
       <el-table-column label="邀请码" align="center" prop="inviteCode" />

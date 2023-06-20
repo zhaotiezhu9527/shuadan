@@ -104,11 +104,12 @@ export default {
         pageSize: 10,
         online: 1,
       },
+      timer: null,
     };
   },
   created() {
     this.getList();
-    setInterval(() => {
+    this.timer = setInterval(() => {
       this.getList();
     },8000)
   },
@@ -193,6 +194,10 @@ export default {
         this.$modal.msgSuccess(res.msg);
       }).catch(() => {});
     },
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);        
+    this.timer = null;
   }
 };
 </script>
