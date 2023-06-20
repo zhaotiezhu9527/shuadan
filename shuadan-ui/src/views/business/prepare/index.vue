@@ -196,7 +196,12 @@ export default {
     };
   },
   created() {
-    this.getList();
+    this.queryParams.userName = this.$route.query.userName
+    if(this.queryParams.userName){
+      this.getList()
+    }else{
+      this.getList();
+    }
     this.getGoods()
   },
   methods: {

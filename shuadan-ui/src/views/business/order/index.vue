@@ -325,8 +325,13 @@ export default {
     };
   },
   created() {
-    this.getList();
     this.getDefaultTime()
+    this.queryParams.userName = this.$route.query.userName
+    if(this.queryParams.userName){
+      this.getList()
+    }else{
+      this.getList();
+    }
   },
   methods: {
     /** 查询订单列表列表 */

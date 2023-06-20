@@ -111,6 +111,13 @@
           <div v-else>{{scope.row.userName}}</div>
         </template>
       </el-table-column>
+      <el-table-column label="已抢单/触发单" align="center">
+        <template slot-scope="scope">
+          <div>
+            {{scope.row.orderCount}} / {{scope.row.prepareCount}}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="昵称" align="center" prop="nickName" />
       <el-table-column label="真实姓名" align="center" prop="realName" />
       <el-table-column label="用户余额" align="center" prop="balance" />
@@ -229,7 +236,7 @@
             type="text"
             v-hasPermi="['business:user:list']"
             @click="goPrepare(scope.row)"
-          >预派送商品</el-button>
+          >预派送</el-button>
           <!-- <el-button
             size="mini"
             type="text"
@@ -521,8 +528,13 @@ export default {
     };
   },
   created() {
-    this.getDefaultTime()
-    this.getList();
+    // this.getDefaultTime()
+    this.queryParams.userName = this.$route.query.userName
+    if(this.queryParams.userName){
+      this.getList()
+    }else{
+      this.getList();
+    }
     this.getLevelList()
   },
   methods: {
