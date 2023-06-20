@@ -14,7 +14,7 @@
           <div>
             <label class="blue-text" @click="orderList(scope.row)">{{scope.row.orderCount}}</label> 
             / 
-            <label class="blue-text">{{scope.row.prepareCount}}</label>
+            <label class="blue-text" @click="orderList(scope.row)">{{scope.row.prepareCount}}</label>
           </div>
         </template>
       </el-table-column>
