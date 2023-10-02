@@ -39,23 +39,23 @@ public class DayReport
 
     /** 充值量 */
     @Excel(name = "充值量")
-    private BigDecimal deposit;
+    private BigDecimal deposit = new BigDecimal(0);
 
     /** 提现量 */
     @Excel(name = "提现量")
-    private BigDecimal withdraw;
+    private BigDecimal withdraw = new BigDecimal(0);
 
     /** 投注量 */
     @Excel(name = "投注量")
-    private BigDecimal bet;
+    private BigDecimal bet = new BigDecimal(0);
 
     /** 返佣量 */
     @Excel(name = "返佣量")
-    private BigDecimal commission;
+    private BigDecimal commission = new BigDecimal(0);
 
     /** 收入量 */
     @Excel(name = "收入量")
-    private BigDecimal income;
+    private BigDecimal income = new BigDecimal(0);
 
     /** 上级代理 */
     @Excel(name = "上级代理")

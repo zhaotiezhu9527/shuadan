@@ -1,4 +1,5 @@
 package com.juhai.web.controller.business;
+import java.math.BigDecimal;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
@@ -146,7 +147,11 @@ public class WithdrawController extends BaseController
             DayReport dayReport = new DayReport();
             dayReport.setUserName(user.getUserName());
             dayReport.setToday(DateUtil.formatDate(now));
+            dayReport.setDeposit(new BigDecimal("0"));
             dayReport.setWithdraw(withdraw.getOptAmount());
+            dayReport.setBet(new BigDecimal("0"));
+            dayReport.setCommission(new BigDecimal("0"));
+            dayReport.setIncome(new BigDecimal("0"));
             dayReport.setUserAgent(user.getUserAgent());
             dayReport.setUserAgentNode(user.getUserAgentNode());
             dayReport.setUserAgentLevel(user.getUserAgentLevel());
