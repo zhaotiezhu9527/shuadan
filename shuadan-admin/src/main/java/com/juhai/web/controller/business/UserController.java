@@ -507,19 +507,19 @@ public class UserController extends BaseController
         object.put("todayOrders", todayOrders);
         object.put("yesterdayOrders", yesterdayOrders);
         // 订单总金额
-        object.put("totalOrderAmounts", dayReport.getBet());
+        object.put("totalOrderAmounts", dayReport == null ? 0 : dayReport.getBet());
         object.put("todayOrderAmounts", todayOrderAmounts);
         object.put("yesterdayOrderAmounts", yesterdayOrderAmounts);
         // 用户充值
-        object.put("totalDepositAmounts", dayReport.getDeposit());
+        object.put("totalDepositAmounts", dayReport == null ? 0 : dayReport.getDeposit());
         object.put("todayDepositAmounts", todayDepositAmounts);
         object.put("yesterdayDepositAmounts", yesterdayDepositAmounts);
         // 用户提现
-        object.put("totalWithdrawAmounts", dayReport.getWithdraw());
+        object.put("totalWithdrawAmounts", dayReport == null ? 0 : dayReport.getWithdraw());
         object.put("todayWithdrawAmounts", todayWithdrawAmounts);
         object.put("yesterdayWithdrawAmounts", yesterdayWithdrawAmounts);
         // 抢单佣金
-        object.put("totalCommissionAmounts", dayReport.getCommission());
+        object.put("totalCommissionAmounts", dayReport == null ? 0 : dayReport.getCommission());
         object.put("todayCommissionAmounts", todayCommissionAmounts);
         object.put("yesterdayCommissionAmounts", yesterdayCommissionAmounts);
         // 用户总金额
