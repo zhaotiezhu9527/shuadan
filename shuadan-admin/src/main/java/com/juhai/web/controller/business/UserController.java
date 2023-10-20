@@ -20,6 +20,7 @@ import com.juhai.common.core.controller.BaseController;
 import com.juhai.common.core.domain.AjaxResult;
 import com.juhai.common.core.page.TableDataInfo;
 import com.juhai.common.enums.BusinessType;
+import com.juhai.common.utils.RedisKeyUtil;
 import com.juhai.common.utils.StringUtils;
 import com.juhai.common.utils.poi.ExcelUtil;
 import com.juhai.web.controller.business.request.OptUserMoneyRequest;
@@ -278,6 +279,10 @@ public class UserController extends BaseController
         }
         user.setBalance(null);
 
+        User redisUser = userService.selectUserById(user.getId());
+        // 删除密码限制
+        String incKey = RedisKeyUtil.PayPwdErrorKey(redisUser.getUserName());
+        redisTemplate.delete(incKey);
         return toAjax(userService.updateUser(user));
     }
 
