@@ -1,6 +1,8 @@
 package com.juhai.framework.manager.factory;
 
 import java.util.TimerTask;
+
+import cn.hutool.extra.servlet.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.juhai.common.constant.Constants;
@@ -38,7 +40,8 @@ public class AsyncFactory
             final Object... args)
     {
         final UserAgent userAgent = UserAgent.parseUserAgentString(ServletUtils.getRequest().getHeader("User-Agent"));
-        final String ip = IpUtils.getIpAddr();
+//        final String ip = IpUtils.getIpAddr();
+        final String ip = ServletUtil.getClientIPByHeader(ServletUtils.getRequest(), "x-original-forwarded-for");
         return new TimerTask()
         {
             @Override
