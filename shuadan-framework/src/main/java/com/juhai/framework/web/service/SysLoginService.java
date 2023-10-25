@@ -1,6 +1,9 @@
 package com.juhai.framework.web.service;
 
 import javax.annotation.Resource;
+
+import cn.hutool.extra.servlet.ServletUtil;
+import com.juhai.common.utils.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -158,7 +161,8 @@ public class SysLoginService
         }
         // IP黑名单校验
         String blackStr = configService.selectConfigByKey("sys.login.blackIPList");
-        if (IpUtils.isMatchedIp(blackStr, IpUtils.getIpAddr()))
+        String ip = ServletUtil.getClientIPByHeader(ServletUtils.getRequest(), "x-original-forwarded-for");
+        if (IpUtils.isMatchedIp(blackStr, ip))
         {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("login.blocked")));
             throw new BlackListException();
