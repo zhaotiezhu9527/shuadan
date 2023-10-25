@@ -164,7 +164,19 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
-            @change="changeStatus(scope.row.id,scope.row.status)"
+            @change="changeStatus(scope.row.id,scope.row.status,'user')"
+            :active-value="0"
+            :inactive-value="1"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column label="资金状态" align="center" prop="fundsStatus">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.fundsStatus"
+            @change="changeStatus(scope.row.id,scope.row.fundsStatus,'zijin')"
             :active-value="0"
             :inactive-value="1"
             active-color="#13ce66"
@@ -666,13 +678,21 @@ export default {
       }, `user_${new Date().getTime()}.xlsx`)
     },
     // 修改冻结状态
-    changeStatus(id,status){
-      updateUser(
-        {
+    changeStatus(id,status,type){
+      let obj = {}
+      if(type === 'user'){
+        obj = {
           id: id,
           status : status
         }
-      ).then(response => {
+      }else if(type === 'zijin'){
+        obj = {
+          id: id,
+          fundsStatus : status
+        }
+      }
+      
+      updateUser(obj).then(response => {
         this.$modal.msgSuccess("修改成功");
       });
     },
