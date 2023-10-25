@@ -217,6 +217,7 @@ public class UserController extends BaseController
         temp.setLoginPwd(SecureUtil.md5(user.getLoginPwd()));
         temp.setPayPwd(SecureUtil.md5(user.getPayPwd()));
         temp.setStatus(0L);
+        temp.setFundsStatus(0L);
         temp.setRealName(null);
         temp.setPhone(null);
         temp.setBankName(null);

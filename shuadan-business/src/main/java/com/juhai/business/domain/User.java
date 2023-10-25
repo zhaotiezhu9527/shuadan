@@ -57,6 +57,10 @@ public class User extends BaseEntity
     @Excel(name = "状态(0:正常 1:冻结)")
     private Long status;
 
+    /** 资金状态(0:正常 1:冻结) */
+    @Excel(name = "状态(0:正常 1:冻结)")
+    private Long fundsStatus;
+
     /** 真实姓名 */
     @Excel(name = "真实姓名")
     private String realName;
@@ -487,6 +491,14 @@ public class User extends BaseEntity
 
     public void setOther(JSONObject other) {
         this.other = other;
+    }
+
+    public Long getFundsStatus() {
+        return fundsStatus;
+    }
+
+    public void setFundsStatus(Long fundsStatus) {
+        this.fundsStatus = fundsStatus;
     }
 
     @Override
