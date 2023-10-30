@@ -131,9 +131,15 @@
         </template>
       </el-table-column>
       
-      <el-table-column label="上级代理" align="center" prop="userAgent">
+      <el-table-column label="上级代理" align="center" prop="userAgent" width="120">
         <template slot-scope="scope">
-          <div class="blue-text" @click="handleUserAgent(scope.row.userAgent)">{{scope.row.userAgent}}</div>
+          <label class="red-text cursorPointer" @click="handleUserAgent(scope.row.userAgent)">{{scope.row.userAgent}}</label>
+          <el-button
+            size="small"
+            type="text"
+            v-clipboard:copy="scope.row.userAgent"
+            v-clipboard:success="onCopy"
+          >复制</el-button>
           <div>{{scope.row.userAgentName}}</div>
         </template>
       </el-table-column>
@@ -597,8 +603,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.daterangeRegisterTime = [];
       this.resetForm("queryForm");
+      this.daterangeRegisterTime = [];
       this.handleQuery();
     },
     // 多选框选中数据
@@ -821,6 +827,10 @@ export default {
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/prepare-edit/index' ,query:{userName: data.userName}})
       })
+    },
+     // 复制
+     onCopy(){
+      this.$modal.msgSuccess("复制成功");
     },
   }
 };

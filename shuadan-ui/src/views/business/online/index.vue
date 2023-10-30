@@ -21,7 +21,13 @@
       <el-table-column label="用户余额" align="center" prop="balance" />
       <el-table-column label="上级用户" align="center" prop="userAgent">
         <template slot-scope="scope">
-          <div class="blue-text" @click="goUser(scope.row.userAgent)">{{scope.row.userAgent}}</div>
+          <label class="red-text cursorPointer" @click="goUser(scope.row.userAgent)">{{scope.row.userAgent}}</label>
+          <el-button
+            size="small"
+            type="text"
+            v-clipboard:copy="scope.row.userAgent"
+            v-clipboard:success="onCopy"
+          >复制</el-button>
           <div>{{scope.row.userAgentName}}</div>
         </template>
       </el-table-column>
@@ -158,28 +164,28 @@ export default {
     },
     // 预派送
     goPrepare(data){
-      const obj = { path: '/user/online' , name: 'Online' };
+      const obj = { path: '/trade/prepare-edit/index' , name: 'prepareEdit' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/prepare-edit/index' ,query:{userName: data.userName}})
       })
     },
     // 派送记录
     goPrepareList(data){
-      const obj = { path: '/user/online' , name: 'Online' };
+      const obj = { path: '/trade/prepare' , name: 'Prepare' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/prepare' ,query:{userName: data.userName}})
       })
     },
     // 跳进会员列表
     goUser(userName)  {
-      const obj = { path: '/user/online' , name: 'Online' };
+      const obj = { path: '/user/user' , name: 'User' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/user/user' ,query:{userName: userName}})
       })
     },
     // 跳转订单列表
     orderList(data){
-      const obj = { path: '/user/online' , name: 'Online' };
+      const obj = { path: '/trade/order' , name: 'Order' };
       this.$tab.closePage(obj).then(() => {
         this.$router.push({path:'/trade/order' ,query:{userName: data.userName}})
       })
@@ -193,6 +199,10 @@ export default {
         this.getList();
         this.$modal.msgSuccess(res.msg);
       }).catch(() => {});
+    },
+    // 复制
+    onCopy(){
+      this.$modal.msgSuccess("复制成功");
     },
   },
   beforeDestroy() {
