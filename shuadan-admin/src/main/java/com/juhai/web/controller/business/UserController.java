@@ -135,7 +135,8 @@ public class UserController extends BaseController
                 temp.setOrderCount(ordercountMap.getOrDefault(temp.getUserName(), 0L));
                 temp.setPrepareCount(prepareMap.getOrDefault(temp.getUserName(), 0L));
                 User agent = agentRealName.get(temp.getUserAgent());
-                temp.setUserAgentName(agent == null ? "" : agent.getRealName());
+//                temp.setUserAgentName(agent == null ? "" : agent.getRealName());
+                temp.setUserAgentName(agent == null ? "" : agent.getNickName() + " / " + agent.getRealName());
             }
         }
 
@@ -217,6 +218,7 @@ public class UserController extends BaseController
         temp.setLoginPwd(SecureUtil.md5(user.getLoginPwd()));
         temp.setPayPwd(SecureUtil.md5(user.getPayPwd()));
         temp.setStatus(0L);
+        temp.setFundsStatus(0L);
         temp.setRealName(null);
         temp.setPhone(null);
         temp.setBankName(null);

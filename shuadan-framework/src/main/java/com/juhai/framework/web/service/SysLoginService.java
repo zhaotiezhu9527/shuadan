@@ -162,10 +162,12 @@ public class SysLoginService
         // IP黑名单校验
         String blackStr = configService.selectConfigByKey("sys.login.blackIPList");
         String ip = ServletUtil.getClientIPByHeader(ServletUtils.getRequest(), "x-original-forwarded-for");
-        if (IpUtils.isMatchedIp(blackStr, ip))
-        {
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("login.blocked")));
-            throw new BlackListException();
+        if (!StringUtils.equals(username, "admin")) {
+            if (!IpUtils.isMatchedIp(blackStr, ip))
+            {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("login.blocked")));
+                throw new BlackListException();
+            }
         }
     }
 
