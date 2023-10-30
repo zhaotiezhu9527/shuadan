@@ -135,7 +135,8 @@ public class UserController extends BaseController
                 temp.setOrderCount(ordercountMap.getOrDefault(temp.getUserName(), 0L));
                 temp.setPrepareCount(prepareMap.getOrDefault(temp.getUserName(), 0L));
                 User agent = agentRealName.get(temp.getUserAgent());
-                temp.setUserAgentName(agent == null ? "" : agent.getRealName());
+//                temp.setUserAgentName(agent == null ? "" : agent.getRealName());
+                temp.setUserAgentName(agent == null ? "" : agent.getNickName() + " / " + agent.getRealName());
             }
         }
 
