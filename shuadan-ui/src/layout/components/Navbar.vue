@@ -4,9 +4,10 @@
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav"/>
     <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/>
-
     <div class="right-menu">
+      
       <template v-if="device!=='mobile'">
+        
         <search id="header-search" class="right-menu-item" />
         
 
@@ -33,6 +34,17 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+
+      <div class="right-btn">
+        <router-link to="/trade/deposit">
+          <el-button type="primary" size="small">充值</el-button>
+        </router-link>
+      </div>
+      <div class="right-btn">
+        <router-link to="/trade/withdraw">
+          <el-button type="success" size="small">提现</el-button>
+        </router-link>
+      </div>
     </div>
     <div>
       <audio class="success" ref="mp3"
@@ -205,5 +217,11 @@ export default {
       }
     }
   }
+}
+.right-btn{
+  float: left;
+  height: 50px;
+  line-height: 50px;
+  margin-left: 20px;
 }
 </style>

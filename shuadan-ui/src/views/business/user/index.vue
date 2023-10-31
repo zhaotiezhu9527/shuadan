@@ -10,6 +10,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="昵称" prop="nickName">
+        <el-input
+          v-model="queryParams.nickName"
+          placeholder="请输入昵称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="真实姓名" prop="realName">
         <el-input
           v-model="queryParams.realName"
@@ -207,21 +215,18 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:user:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
             @click="balanceUpdate(scope.row)"
             v-hasPermi="['business:user:optMoney']"
           >余额重置</el-button>
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
             @click="handleBalance(scope.row)"
             v-hasPermi="['business:user:optMoney']"
           >上下分</el-button>
@@ -794,7 +799,7 @@ export default {
     balanceUpdateSub(){
       this.$refs["resetBalanceForm"].validate(valid => {
         if (valid) {
-          resetBalance(this.setOddForm).then(response => {
+          resetBalance(this.resetBalanceForm).then(response => {
             this.$modal.msgSuccess("修改成功");
             this.resetBalanceStatus = false;
             this.getList();

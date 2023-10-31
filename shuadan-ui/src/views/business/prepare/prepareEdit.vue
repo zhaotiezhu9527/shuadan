@@ -32,7 +32,7 @@
                 <el-input
                 class="margin-top10"
                 v-model="queryParams.promptText"
-                placeholder="请输入提示文本"
+                placeholder="加急单"
                 clearable
                 @keyup.enter.native="handleQuery"
                 />
@@ -183,7 +183,8 @@ export default {
             queryParams: {
                 userName: null,
                 Num:0,
-                goodsSelect:''
+                goodsSelect:'',
+                promptText: '加急单',
             },
             goodsList:[],//商品列表
             addList:[],//添加数据
