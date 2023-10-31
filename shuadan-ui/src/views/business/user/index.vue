@@ -256,6 +256,12 @@
             v-hasPermi="['business:user:list']"
             @click="goPrepare(scope.row)"
           >预派送</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            v-hasPermi="['business:user:edit']"
+            @click="setOddNo(scope.row)"
+          >设置单数</el-button>
           <!-- <el-button
             size="mini"
             type="text"
@@ -429,11 +435,26 @@
         <el-button @click="detailsOpen = false">取 消</el-button>
       </div>
     </el-dialog>
+     <!-- 设置单数对话框 -->
+     <el-dialog title="设置单数" :visible.sync="setOddStatus" width="500px" append-to-body>
+      <el-form ref="setOddForm" :model="setOddForm" :rules="rules" label-width="120px">
+        <el-form-item label="用户名">
+          <el-input :disabled="true" v-model="setOddForm.userName" placeholder="请输入4-12位数字或字母" />
+        </el-form-item>
+        <el-form-item label="单数" prop="orderCount">
+          <el-input-number v-model="setOddForm.orderCount" :min="1" placeholder="请输入金额" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="setOddSub">确 定</el-button>
+        <el-button @click="setOddStatus = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser ,resetBalance, balanceUser,nodeUser} from "@/api/business/user";
+import { listUser, getUser, delUser, addUser, updateUser ,resetBalance, balanceUser,nodeUser ,setTodayCount} from "@/api/business/user";
 import { listLevel } from "@/api/business/level";
 import { dateFormat } from '@/utils/auth'
 
@@ -544,6 +565,12 @@ export default {
         pageSize: 10,
         userAgentLevel: "1",
       },
+      // 设置单数
+      setOddStatus: false,
+      setOddForm: {
+        userName: '',
+        orderCount: 1,
+      }
     };
   },
   created() {
@@ -767,7 +794,7 @@ export default {
     balanceUpdateSub(){
       this.$refs["resetBalanceForm"].validate(valid => {
         if (valid) {
-          resetBalance(this.resetBalanceForm).then(response => {
+          resetBalance(this.setOddForm).then(response => {
             this.$modal.msgSuccess("修改成功");
             this.resetBalanceStatus = false;
             this.getList();
@@ -831,6 +858,23 @@ export default {
      // 复制
      onCopy(){
       this.$modal.msgSuccess("复制成功");
+    },
+    // 设置单数
+    setOddNo(row){
+      this.setOddStatus = true
+      this.setOddForm.userName = row.userName
+    },
+    // 提交设置单数
+    setOddSub(){
+      this.$refs["setOddForm"].validate(valid => {
+        if (valid) {
+          setTodayCount(this.setOddForm).then(response => {
+            this.$modal.msgSuccess("修改成功");
+            this.setOddStatus = false;
+            this.getList();
+          });
+        }
+      });
     },
   }
 };

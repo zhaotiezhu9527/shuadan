@@ -159,7 +159,7 @@
 
     <!-- 添加或修改订单列表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号" />
         </el-form-item>

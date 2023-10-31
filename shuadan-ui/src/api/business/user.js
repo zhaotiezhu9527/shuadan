@@ -69,3 +69,12 @@ export function nodeUser(query) {
     params: query
   })
 }
+
+// 设置单数
+export function setTodayCount(data) {
+  return request({
+    url: '/business/user/setTodayCount',
+    method: 'post',
+    data: data
+  })
+}
