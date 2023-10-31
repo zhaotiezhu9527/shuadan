@@ -75,6 +75,7 @@ public class UserController extends BaseController
     @Autowired
     private IPrepareService prepareService;
 
+
     /**
      * 查询会员列表列表
      */
@@ -298,6 +299,21 @@ public class UserController extends BaseController
                         .eq(User::getId, user.getId())
                         .set(User::getBalance, user.getBalance())
         );
+        return AjaxResult.success();
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:user:edit')")
+    @Log(title = "【设置今日单数】", businessType = BusinessType.UPDATE)
+    @PostMapping("/setTodayCount")
+    public AjaxResult reSetTodayCount(@RequestBody OrderCount orderCount) throws Exception {
+        Date now = new Date();
+        OrderCount orderCount1 = new OrderCount();
+        orderCount1.setUserName(orderCount.getUserName());
+        orderCount1.setToday(DateUtil.formatDate(new Date()));
+        orderCount1.setOrderCount(orderCount.getOrderCount() == null ? 0 : orderCount.getOrderCount());
+        orderCount1.setCreateTime(now);
+        orderCount1.setUpdateTime(now);
+        orderCountService.insertOrUpdate(orderCount1);
         return AjaxResult.success();
     }
 

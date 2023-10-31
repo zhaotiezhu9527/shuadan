@@ -3,6 +3,8 @@ package com.juhai.business.mapper;
 import java.util.List;
 import com.juhai.business.domain.OrderCount;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
 /**
  * 每日订单量Mapper接口
  * 
@@ -58,4 +60,6 @@ public interface OrderCountMapper extends BaseMapper<OrderCount>
      * @return 结果
      */
     public int deleteOrderCountByIds(Long[] ids);
+
+    int insertOrUpdate(@Param("report") OrderCount report);
 }

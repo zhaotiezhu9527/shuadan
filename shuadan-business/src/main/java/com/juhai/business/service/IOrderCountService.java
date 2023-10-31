@@ -58,4 +58,6 @@ public interface IOrderCountService extends IService<OrderCount>
      * @return 结果
      */
     public int deleteOrderCountById(Long id);
+
+    public void insertOrUpdate(OrderCount report) throws Exception;
 }
