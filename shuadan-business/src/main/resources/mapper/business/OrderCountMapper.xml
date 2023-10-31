@@ -71,4 +71,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <insert id="insertOrUpdate">
+        insert into t_order_count
+            (user_name, today, order_count, create_time, update_time)
+        VALUES (#{report.userName},
+                #{report.today},
+                #{report.orderCount},
+                #{report.createTime},
+                #{report.updateTime}
+               ) ON DUPLICATE KEY
+        UPDATE order_count = #{report.orderCount},
+            update_time = #{report.updateTime}
+    </insert>
 </mapper>

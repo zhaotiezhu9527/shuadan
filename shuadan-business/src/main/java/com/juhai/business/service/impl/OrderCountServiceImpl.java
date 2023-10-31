@@ -94,4 +94,12 @@ public class OrderCountServiceImpl extends ServiceImpl<OrderCountMapper, OrderCo
     {
         return orderCountMapper.deleteOrderCountById(id);
     }
+
+    @Override
+    public void insertOrUpdate(OrderCount report) throws Exception {
+        int i = orderCountMapper.insertOrUpdate(report);
+        if (i <= 0) {
+            throw new Exception("修改日报表失败");
+        }
+    }
 }
