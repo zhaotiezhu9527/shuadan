@@ -118,6 +118,12 @@ public class User extends BaseEntity
     @Excel(name = "注册IP")
     private String registerIp;
 
+    /**
+     * 钱包地址
+     */
+    @Excel(name = "钱包地址")
+    private String walletAddr;
+
     /** 最后登录时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
@@ -166,6 +172,14 @@ public class User extends BaseEntity
     /** 上级用户名 **/
     @TableField(exist = false)
     private String userAgentName;
+
+    public String getWalletAddr() {
+        return walletAddr;
+    }
+
+    public void setWalletAddr(String walletAddr) {
+        this.walletAddr = walletAddr;
+    }
 
     public String getUserAgentName() {
         return userAgentName;
