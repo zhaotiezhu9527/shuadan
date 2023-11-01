@@ -260,6 +260,7 @@ export default {
         },
         getCookie() {
             this.resourceDomain = JSON.parse(Cookies.get("config"));
+            this.queryParams.promptText = JSON.parse(Cookies.get("urgentText"));
         },
         // 添加
         addGoods(data){
@@ -318,9 +319,6 @@ export default {
             getPrepareNewOne(this.queryParams.userName).then(response => {
                 this.queryParams.Num = response.data
             });
-        },
-        getCookie() {
-            this.queryParams.promptText = JSON.parse(Cookies.get("urgentText"));
         },
     },
     components: { router }
