@@ -38,7 +38,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(username, password, code, uuid).then(res => {
           setToken(res.token)
-          setConfig(JSON.stringify(res.other.resourceDomain))
+          setConfig(JSON.stringify(res.other))
           setUrgentText(JSON.stringify(res.other.jjdmrz))
           commit('SET_TOKEN', res.token)
           resolve()

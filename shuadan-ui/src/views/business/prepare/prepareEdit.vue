@@ -194,6 +194,8 @@ export default {
                 maxPrice: "",
                 pageNum: 1,
                 pageSize: 10000,
+                isAsc: "asc",
+                orderByColumn: "goods_price"
             },//列表查询参数
         };
     },
@@ -260,6 +262,7 @@ export default {
         },
         getCookie() {
             this.resourceDomain = JSON.parse(Cookies.get("config"));
+            console.log(this.resourceDomain)
             this.queryParams.promptText = JSON.parse(Cookies.get("urgentText"));
         },
         // 添加

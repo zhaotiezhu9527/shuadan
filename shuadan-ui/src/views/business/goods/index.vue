@@ -214,10 +214,14 @@ export default {
         pageSize: 10,
         goodsName: null,
         shopName: null,
-        status: null
+        status: null,
+        isAsc: "desc",
+        orderByColumn: "create_time"
       },
       // 表单参数
-      form: {},
+      form: {
+        
+      },
       // 表单校验
       rules: {
       },

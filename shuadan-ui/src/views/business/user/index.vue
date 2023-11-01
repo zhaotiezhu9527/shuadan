@@ -138,6 +138,13 @@
           <div>{{scope.row.bankAddr}}</div>
         </template>
       </el-table-column>
+      <el-table-column label="USDT钱包地址" align="center" prop="walletAddr" width="200">
+        <template slot-scope="scope">
+          <div 
+            v-clipboard:copy="scope.row.walletAddr"
+            v-clipboard:success="onCopy" class="usdt-addr">{{scope.row.walletAddr || "-"}}</div>
+        </template>
+      </el-table-column>
       
       <el-table-column label="上级代理" align="center" prop="userAgent" width="120">
         <template slot-scope="scope">
@@ -318,6 +325,9 @@
         </el-form-item>
         <el-form-item label="开户行地址" prop="bankAddr">
           <el-input v-model="form.bankAddr" placeholder="请输入开户行地址" />
+        </el-form-item>
+        <el-form-item label="USDT地址" prop="walletAddr">
+          <el-input v-model="form.walletAddr" placeholder="请输入usdt钱包地址" />
         </el-form-item>
         <el-form-item label="信用分" prop="creditValue">
           <el-input v-model="form.creditValue" placeholder="请输入信用分" />
@@ -680,6 +690,7 @@ export default {
         levelId: this.form.levelId,
         remake: this.form.remake,
         updateOrder: this.form.updateOrder,
+        walletAddr: this.form.walletAddr,
       }
       this.$refs["form"].validate(valid => {
         if (valid) {

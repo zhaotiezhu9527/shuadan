@@ -118,6 +118,13 @@
           <div>{{scope.row.bankNo}}</div>
         </template>
       </el-table-column>
+      <el-table-column label="USDT" align="center" prop="bankName" width="180">
+        <template slot-scope="scope">
+          <div
+            v-clipboard:copy="scope.row.walletAddr"
+            v-clipboard:success="onCopy" class="usdt-addr">{{scope.row.walletAddr}}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="联系电话" align="center" prop="phone" width="110"/>
       <el-table-column label="发起时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
@@ -202,6 +209,9 @@
         </el-form-item>
         <el-form-item label="银行卡号" prop="bankNo">
           <el-input v-model="form.bankNo" placeholder="请输入银行卡号" />
+        </el-form-item>
+        <el-form-item label="USDT" prop="walletAddr">
+          <el-input v-model="form.walletAddr" placeholder="请输入USDT钱包地址" />
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入手机号" />
@@ -475,7 +485,11 @@ export default {
           });
         }
       });
-    }
+    },
+     // 复制
+     onCopy(){
+      this.$modal.msgSuccess("复制成功");
+    },
   }
 };
 </script>
