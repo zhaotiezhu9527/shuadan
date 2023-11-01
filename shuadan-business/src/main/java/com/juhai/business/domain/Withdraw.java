@@ -95,9 +95,23 @@ public class Withdraw extends BaseEntity
     @Excel(name = "代理层级")
     private Long userAgentLevel;
 
+    /**
+     * 钱包地址
+     */
+    @Excel(name = "钱包地址")
+    private String walletAddr;
+
     private String updateBy;
 
-    public void setId(Long id) 
+    public String getWalletAddr() {
+        return walletAddr;
+    }
+
+    public void setWalletAddr(String walletAddr) {
+        this.walletAddr = walletAddr;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

@@ -41,10 +41,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="income"    column="income"    />
         <result property="bet"    column="bet"    />
         <result property="inviteCount"    column="invite_count"    />
+        <result property="walletAddr" column="wallet_addr" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="selectUserVo">
-        select id, user_name, nick_name, balance, freeze_balance, login_pwd, pay_pwd, status, funds_status, real_name, phone, bank_name, bank_no, bank_addr, credit_value, level_id, avatar_id, invite_code, user_agent, user_agent_node, user_agent_level, register_time, register_ip, last_time, last_ip, create_time, create_by, update_time, update_by, remake, update_order, deposit, withdraw, income, bet, invite_count from t_user
+        select id, user_name, nick_name, wallet_addr, balance, freeze_balance, login_pwd, pay_pwd, status, funds_status, real_name, phone, bank_name, bank_no, bank_addr, credit_value, level_id, avatar_id, invite_code, user_agent, user_agent_node, user_agent_level, register_time, register_ip, last_time, last_ip, create_time, create_by, update_time, update_by, remake, update_order, deposit, withdraw, income, bet, invite_count from t_user
     </sql>
 
     <select id="selectUserList" parameterType="User" resultMap="UserResult">
@@ -56,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fundsStatus != null "> and funds_status = #{fundsStatus}</if>
             <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="walletAddr != null  and walletAddr != ''"> and wallet_addr = #{walletAddr}</if>
             <if test="bankName != null  and bankName != ''"> and bank_name = #{bankName}</if>
             <if test="bankNo != null  and bankNo != ''"> and bank_no = #{bankNo}</if>
             <if test="bankAddr != null  and bankAddr != ''"> and bank_addr = #{bankAddr}</if>
@@ -92,6 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payPwd != null">pay_pwd,</if>
             <if test="status != null">status,</if>
             <if test="fundsStatus != null">funds_status,</if>
+            <if test="walletAddr != null">wallet_addr,</if>
             <if test="realName != null">real_name,</if>
             <if test="phone != null">phone,</if>
             <if test="bankName != null">bank_name,</if>
@@ -129,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payPwd != null">#{payPwd},</if>
             <if test="status != null">#{status},</if>
             <if test="fundsStatus != null">#{fundsStatus},</if>
+            <if test="walletAddr != null">#{walletAddr},</if>
             <if test="realName != null">#{realName},</if>
             <if test="phone != null">#{phone},</if>
             <if test="bankName != null">#{bankName},</if>
@@ -170,6 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payPwd != null">pay_pwd = #{payPwd},</if>
             <if test="status != null">status = #{status},</if>
             <if test="fundsStatus != null">funds_status = #{fundsStatus},</if>
+            <if test="walletAddr != null">wallet_addr = #{walletAddr},</if>
             <if test="realName != null">real_name = #{realName},</if>
             <if test="phone != null">phone = #{phone},</if>
             <if test="bankName != null">bank_name = #{bankName},</if>

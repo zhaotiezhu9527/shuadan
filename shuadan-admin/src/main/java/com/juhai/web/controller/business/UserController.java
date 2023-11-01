@@ -225,6 +225,7 @@ public class UserController extends BaseController
         temp.setBankName(null);
         temp.setBankNo(null);
         temp.setBankAddr(null);
+        temp.setWalletAddr(null);
         temp.setCreditValue(100L);
         temp.setLevelId(1L);
         temp.setAvatarId(1L);

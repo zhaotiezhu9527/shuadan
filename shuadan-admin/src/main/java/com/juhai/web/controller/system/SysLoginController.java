@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.hutool.core.map.MapUtil;
 import com.juhai.business.service.IParamterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,6 +61,7 @@ public class SysLoginController
 
         Map<String, String> other = new HashMap<>();
         other.put("resourceDomain", params.get("resource_domain"));
+        other.put("jjdmrz", MapUtil.getStr(params, "jjdmrz", ""));
         ajax.put("other", other);
         return ajax;
     }
