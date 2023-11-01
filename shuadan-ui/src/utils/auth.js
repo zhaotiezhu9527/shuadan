@@ -17,6 +17,10 @@ export function setConfig(config) {
   return Cookies.set('config', config)
 }
 
+export function setUrgentText(urgentText) {
+  return Cookies.set('urgentText', urgentText)
+}
+
 export function dateFormat(fmt, date) {
   let ret;
   const opt = {

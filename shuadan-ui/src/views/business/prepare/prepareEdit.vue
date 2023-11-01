@@ -184,7 +184,7 @@ export default {
                 userName: null,
                 Num:0,
                 goodsSelect:'',
-                promptText: '加急单',
+                promptText: '',
             },
             goodsList:[],//商品列表
             addList:[],//添加数据
@@ -318,7 +318,10 @@ export default {
             getPrepareNewOne(this.queryParams.userName).then(response => {
                 this.queryParams.Num = response.data
             });
-        }
+        },
+        getCookie() {
+            this.queryParams.promptText = JSON.parse(Cookies.get("urgentText"));
+        },
     },
     components: { router }
 };
