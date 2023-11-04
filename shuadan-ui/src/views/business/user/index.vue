@@ -457,7 +457,7 @@
           <el-input :disabled="true" v-model="setOddForm.userName" placeholder="请输入4-12位数字或字母" />
         </el-form-item>
         <el-form-item label="单数" prop="orderCount">
-          <el-input-number v-model="setOddForm.orderCount" :min="1" placeholder="请输入金额" />
+          <el-input-number v-model="setOddForm.orderCount" :min="0" placeholder="请输入金额" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
