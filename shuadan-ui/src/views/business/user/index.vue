@@ -584,7 +584,7 @@ export default {
       setOddStatus: false,
       setOddForm: {
         userName: '',
-        orderCount: 1,
+        orderCount: 0,
       }
     };
   },
