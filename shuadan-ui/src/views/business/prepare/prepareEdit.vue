@@ -262,7 +262,6 @@ export default {
         },
         getCookie() {
             this.resourceDomain = JSON.parse(Cookies.get("config"));
-            console.log(this.resourceDomain)
             this.queryParams.promptText = JSON.parse(Cookies.get("urgentText"));
         },
         // 添加
