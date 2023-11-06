@@ -173,7 +173,7 @@ public class PrepareController extends BaseController
             p.setGoodsId(goodsId);
             p.setGoodsCount(goodsCount);
             p.setPreBatch(batch);
-            p.setPromptText(StringUtils.isBlank(prepare.getPromptText()) ? "加急单" : prepare.getPromptText());
+            p.setPromptText(StringUtils.isBlank(prepare.getPromptText()) ? "" : prepare.getPromptText());
             p.setCommissionMul(prepare.getCommissionMul());
             p.setOrderAmount(NumberUtil.mul(goods.getGoodsPrice(), goodsCount));
             p.setStatus(0L);
