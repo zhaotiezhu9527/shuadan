@@ -105,9 +105,11 @@
       <el-table-column label="订单号" align="center" prop="orderNo" />
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="提现金额" align="center" prop="optAmount" />
-      <el-table-column label="手续费" align="center" prop="feeRate">
+       <el-table-column label="USDT" align="center" prop="bankName" width="180">
         <template slot-scope="scope">
-          <div>{{scope.row.feeRate}}%</div>
+          <div
+            v-clipboard:copy="scope.row.walletAddr"
+            v-clipboard:success="onCopy" class="usdt-addr">{{scope.row.walletAddr}}</div>
         </template>
       </el-table-column>
       <el-table-column label="实际到账" align="center" prop="realAmount" />
@@ -118,11 +120,9 @@
           <div>{{scope.row.bankNo}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="USDT" align="center" prop="bankName" width="180">
+     <el-table-column label="手续费" align="center" prop="feeRate">
         <template slot-scope="scope">
-          <div
-            v-clipboard:copy="scope.row.walletAddr"
-            v-clipboard:success="onCopy" class="usdt-addr">{{scope.row.walletAddr}}</div>
+          <div>{{scope.row.feeRate}}%</div>
         </template>
       </el-table-column>
       <el-table-column label="联系电话" align="center" prop="phone" width="110"/>
