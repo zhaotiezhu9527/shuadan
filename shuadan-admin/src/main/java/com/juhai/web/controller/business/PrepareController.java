@@ -167,9 +167,20 @@ public class PrepareController extends BaseController
                 continue;
             }
 
+            long triggerNum = prepare.getTriggerNum() + i;
+            Prepare samePrepare = prepareService.getOne(
+                    new LambdaQueryWrapper<Prepare>()
+                            .eq(Prepare::getUserName, prepare.getUserName())
+                            .eq(Prepare::getStatus, 0)
+                            .eq(Prepare::getTriggerNum, triggerNum)
+            );
+            if (samePrepare != null) {
+                return AjaxResult.error("用户第[" + triggerNum + "]单还未完成,不要重复派送");
+            }
+
             Prepare p = new Prepare();
             p.setUserName(prepare.getUserName());
-            p.setTriggerNum(prepare.getTriggerNum() + i);
+            p.setTriggerNum(triggerNum);
             p.setGoodsId(goodsId);
             p.setGoodsCount(goodsCount);
             p.setPreBatch(batch);

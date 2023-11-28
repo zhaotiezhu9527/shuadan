@@ -75,7 +75,6 @@ public class UserController extends BaseController
     @Autowired
     private IPrepareService prepareService;
 
-
     /**
      * 查询会员列表列表
      */
@@ -307,6 +306,21 @@ public class UserController extends BaseController
     @Log(title = "【设置今日单数】", businessType = BusinessType.UPDATE)
     @PostMapping("/setTodayCount")
     public AjaxResult reSetTodayCount(@RequestBody OrderCount orderCount) throws Exception {
+
+        if (StringUtils.isBlank(orderCount.getUserName())) {
+            return AjaxResult.error("用户名为空");
+        }
+
+        // 验证是否还有订单未完成
+        long noFinishCount = orderService.count(
+                new LambdaQueryWrapper<Order>()
+                        .in(Order::getStatus, Arrays.asList(0, 4))
+                        .eq(Order::getUserName, orderCount.getUserName())
+        );
+        if (noFinishCount >= 1) {
+            return AjaxResult.error("用户还有订单未支付,支付后在重置次数");
+        }
+
         Date now = new Date();
         OrderCount orderCount1 = new OrderCount();
         orderCount1.setUserName(orderCount.getUserName());
