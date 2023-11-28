@@ -25,10 +25,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="userAgentNode"    column="user_agent_node"    />
         <result property="userAgentLevel"    column="user_agent_level"    />
         <result property="walletAddr" column="wallet_addr" jdbcType="VARCHAR"/>
+        <result property="usdtAmount" column="usdt_amount"/>
+        <result property="walletType" column="wallet_type"/>
     </resultMap>
 
     <sql id="selectWithdrawVo">
-        select id, order_no, user_name, nick_name, wallet_addr, opt_amount, fee_rate, real_amount, bank_name, real_name, bank_no, phone, order_time, check_time, status, update_by, remark, user_agent, user_agent_node, user_agent_level from t_withdraw
+        select id, order_no, usdt_amount, wallet_type, user_name, nick_name, wallet_addr, opt_amount, fee_rate, real_amount, bank_name, real_name, bank_no, phone, order_time, check_time, status, update_by, remark, user_agent, user_agent_node, user_agent_level from t_withdraw
     </sql>
 
     <select id="selectWithdrawList" parameterType="Withdraw" resultMap="WithdrawResult">
@@ -51,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgent != null  and userAgent != ''"> and user_agent = #{userAgent}</if>
             <if test="userAgentNode != null  and userAgentNode != ''"> and user_agent_node = #{userAgentNode}</if>
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
+            <if test="walletType != null "> and wallet_type = #{walletType}</if>
         </where>
         ORDER BY order_time DESC
     </select>
@@ -82,6 +85,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgent != null">user_agent,</if>
             <if test="userAgentNode != null">user_agent_node,</if>
             <if test="userAgentLevel != null">user_agent_level,</if>
+            <if test="usdtAmount != null">usdt_amount,</if>
+            <if test="walletType != null">wallet_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNo != null">#{orderNo},</if>
@@ -103,6 +108,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgent != null">#{userAgent},</if>
             <if test="userAgentNode != null">#{userAgentNode},</if>
             <if test="userAgentLevel != null">#{userAgentLevel},</if>
+            <if test="usdtAmount != null">#{usdtAmount},</if>
+            <if test="walletType != null">#{walletType},</if>
          </trim>
     </insert>
 
@@ -128,6 +135,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgent != null">user_agent = #{userAgent},</if>
             <if test="userAgentNode != null">user_agent_node = #{userAgentNode},</if>
             <if test="userAgentLevel != null">user_agent_level = #{userAgentLevel},</if>
+            <if test="usdtAmount != null">usdt_amount = #{usdtAmount},</if>
+            <if test="walletType != null">wallet_type = #{walletType},</if>
         </trim>
         where id = #{id}
     </update>

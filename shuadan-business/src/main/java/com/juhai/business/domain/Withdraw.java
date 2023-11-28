@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -100,6 +101,16 @@ public class Withdraw extends BaseEntity
      */
     @Excel(name = "钱包地址")
     private String walletAddr;
+
+    /**
+     * usdt金额
+     */
+    private BigDecimal usdtAmount;
+
+    /**
+     * 1:提现到银行 2:提现到钱包
+     */
+    private Integer walletType;
 
     private String updateBy;
 
@@ -263,6 +274,22 @@ public class Withdraw extends BaseEntity
     public Long getUserAgentLevel() 
     {
         return userAgentLevel;
+    }
+
+    public BigDecimal getUsdtAmount() {
+        return usdtAmount;
+    }
+
+    public void setUsdtAmount(BigDecimal usdtAmount) {
+        this.usdtAmount = usdtAmount;
+    }
+
+    public Integer getWalletType() {
+        return walletType;
+    }
+
+    public void setWalletType(Integer walletType) {
+        this.walletType = walletType;
     }
 
     @Override
