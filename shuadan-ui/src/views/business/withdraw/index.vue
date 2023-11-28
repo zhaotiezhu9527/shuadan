@@ -104,8 +104,19 @@
       <el-table-column label="id" align="center" prop="id" width="50"/>
       <el-table-column label="订单号" align="center" prop="orderNo" />
       <el-table-column label="用户名" align="center" prop="userName" />
-      <el-table-column label="提现金额" align="center" prop="optAmount" />
-       <el-table-column label="USDT" align="center" prop="bankName" width="180">
+      <el-table-column label="提现类型" align="center" prop="walletType">
+        <template slot-scope="scope">
+          <div v-if="scope.row.walletType === 1">银行卡</div>
+          <div v-else-if="scope.row.walletType === 2">U钱包</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="提现金额" align="center" prop="optAmount" >
+        <template slot-scope="scope">
+          <div v-if="scope.row.walletType === 1">{{scope.row.optAmount}}</div>
+          <div v-else-if="scope.row.walletType === 2">{{scope.row.usdtAmount}} USDT</div>
+        </template>
+      </el-table-column>
+       <el-table-column label="USDT地址" align="center" prop="bankName" width="180">
         <template slot-scope="scope">
           <div
             v-clipboard:copy="scope.row.walletAddr"
