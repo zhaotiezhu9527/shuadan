@@ -112,8 +112,13 @@
       </el-table-column>
       <el-table-column label="提现金额" align="center" prop="optAmount" >
         <template slot-scope="scope">
-          <div v-if="scope.row.walletType === 1">{{scope.row.optAmount}}</div>
-          <div v-else-if="scope.row.walletType === 2">{{scope.row.usdtAmount}} USDT</div>
+          <div>{{scope.row.optAmount}}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="折合USDT" align="center" prop="optAmount" width="120">
+        <template slot-scope="scope">
+          <div v-if="scope.row.usdtAmount">$ {{scope.row.usdtAmount}}</div>
+          <div v-else> - </div>
         </template>
       </el-table-column>
        <el-table-column label="USDT地址" align="center" prop="bankName" width="180">
@@ -123,7 +128,7 @@
             v-clipboard:success="onCopy" class="usdt-addr">{{scope.row.walletAddr}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="实际到账" align="center" prop="realAmount" />
+      <!-- <el-table-column label="实际到账" align="center" prop="realAmount" /> -->
       <el-table-column label="银行信息" align="center" prop="bankName" width="180">
         <template slot-scope="scope">
           <div>{{scope.row.realName}}</div>
@@ -131,11 +136,11 @@
           <div>{{scope.row.bankNo}}</div>
         </template>
       </el-table-column>
-     <el-table-column label="手续费" align="center" prop="feeRate">
+     <!-- <el-table-column label="手续费" align="center" prop="feeRate">
         <template slot-scope="scope">
           <div>{{scope.row.feeRate}}%</div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="联系电话" align="center" prop="phone" width="110"/>
       <el-table-column label="发起时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
@@ -147,7 +152,7 @@
           <span>{{ parseTime(scope.row.checkTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column label="状态" align="center" prop="status" width="120">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 1" type="success">审核通过</el-tag>
           <el-tag v-else-if="scope.row.status === 2" type="danger">拒绝</el-tag>
