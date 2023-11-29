@@ -217,15 +217,15 @@
         <el-form-item label="到账金额" prop="realAmount">
           <el-input v-model="form.realAmount" placeholder="请输入到账金额" />
         </el-form-item>
-        <el-form-item label="开户行" prop="bankName">
+        <!-- <el-form-item label="开户行" prop="bankName">
           <el-input v-model="form.bankName" placeholder="请输入开户行" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="真实姓名" prop="realName">
           <el-input v-model="form.realName" placeholder="请输入真实姓名" />
         </el-form-item>
-        <el-form-item label="银行卡号" prop="bankNo">
+        <!-- <el-form-item label="银行卡号" prop="bankNo">
           <el-input v-model="form.bankNo" placeholder="请输入银行卡号" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="USDT" prop="walletAddr">
           <el-input v-model="form.walletAddr" placeholder="请输入USDT钱包地址" />
         </el-form-item>

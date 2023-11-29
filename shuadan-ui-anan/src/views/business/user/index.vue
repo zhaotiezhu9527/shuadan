@@ -131,13 +131,13 @@
       <el-table-column label="用户余额" align="center" prop="balance" />
       <el-table-column label="冻结金额" align="center" prop="freezeBalance" />
       <el-table-column label="手机号" align="center" prop="phone" />
-      <el-table-column label="银行信息" align="center" prop="bankName" width="200">
+      <!-- <el-table-column label="银行信息" align="center" prop="bankName" width="200">
         <template slot-scope="scope">
           <div>{{scope.row.bankName}}</div>
           <div>{{scope.row.bankNo}}</div>
           <div>{{scope.row.bankAddr}}</div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="USDT钱包地址" align="center" prop="walletAddr" width="200">
         <template slot-scope="scope">
           <div 
@@ -317,7 +317,7 @@
         <el-form-item label="用户手机号" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入用户手机号" />
         </el-form-item>
-        <el-form-item label="开户行" prop="bankName">
+        <!-- <el-form-item label="开户行" prop="bankName">
           <el-input v-model="form.bankName" placeholder="请输入开户行" />
         </el-form-item>
         <el-form-item label="银行卡号" prop="bankNo">
@@ -325,7 +325,7 @@
         </el-form-item>
         <el-form-item label="开户行地址" prop="bankAddr">
           <el-input v-model="form.bankAddr" placeholder="请输入开户行地址" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="USDT地址" prop="walletAddr">
           <el-input v-model="form.walletAddr" placeholder="请输入usdt钱包地址" />
         </el-form-item>
