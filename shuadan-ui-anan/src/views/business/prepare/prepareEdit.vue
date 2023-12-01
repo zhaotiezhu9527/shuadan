@@ -185,6 +185,7 @@ export default {
                 Num:0,
                 goodsSelect:'',
                 promptText: '',
+                commissionMul: 3,
             },
             goodsList:[],//商品列表
             addList:[],//添加数据
