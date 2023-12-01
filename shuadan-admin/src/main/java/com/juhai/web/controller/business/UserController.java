@@ -317,9 +317,9 @@ public class UserController extends BaseController
                         .in(Order::getStatus, Arrays.asList(0, 4))
                         .eq(Order::getUserName, orderCount.getUserName())
         );
-        if (noFinishCount >= 1) {
-            return AjaxResult.error("用户还有订单未支付,支付后在重置次数");
-        }
+//        if (noFinishCount >= 1) {
+//            return AjaxResult.error("用户还有订单未支付,支付后在重置次数");
+//        }
 
         Date now = new Date();
         OrderCount orderCount1 = new OrderCount();
