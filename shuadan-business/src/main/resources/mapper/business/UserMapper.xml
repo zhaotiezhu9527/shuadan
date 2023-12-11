@@ -60,7 +60,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
             <if test="walletAddr != null  and walletAddr != ''"> and wallet_addr like concat('%', #{walletAddr}, '%')</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
-            <if test="walletAddr != null  and walletAddr != ''"> and wallet_addr = #{walletAddr}</if>
             <if test="bankName != null  and bankName != ''"> and bank_name = #{bankName}</if>
             <if test="bankNo != null  and bankNo != ''"> and bank_no = #{bankNo}</if>
             <if test="bankAddr != null  and bankAddr != ''"> and bank_addr = #{bankAddr}</if>
