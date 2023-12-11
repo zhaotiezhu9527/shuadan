@@ -131,11 +131,10 @@
       <el-table-column label="用户余额" align="center" prop="balance" />
       <el-table-column label="冻结金额" align="center" prop="freezeBalance" />
       <el-table-column label="手机号" align="center" prop="phone" />
-      <el-table-column label="银行信息" align="center" prop="bankName" width="200">
+      <el-table-column label="身份证号" align="center" prop="idCard" />
+      <el-table-column label="身份证图" align="center" prop="idCardImg" width="120">
         <template slot-scope="scope">
-          <div>{{scope.row.bankName}}</div>
-          <div>{{scope.row.bankNo}}</div>
-          <div>{{scope.row.bankAddr}}</div>
+          <img class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.idCardImg" />
         </template>
       </el-table-column>
       <el-table-column label="USDT钱包地址" align="center" prop="walletAddr" width="200">
@@ -317,14 +316,21 @@
         <el-form-item label="用户手机号" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入用户手机号" />
         </el-form-item>
-        <el-form-item label="开户行" prop="bankName">
-          <el-input v-model="form.bankName" placeholder="请输入开户行" />
+        <el-form-item label="身份证号" prop="phone">
+          <el-input v-model="form.idCard" placeholder="请输入用户身份证号" />
         </el-form-item>
-        <el-form-item label="银行卡号" prop="bankNo">
-          <el-input v-model="form.bankNo" placeholder="请输入银行卡号" />
-        </el-form-item>
-        <el-form-item label="开户行地址" prop="bankAddr">
-          <el-input v-model="form.bankAddr" placeholder="请输入开户行地址" />
+        <el-form-item label="身份证图" prop="idCardImg">
+          <el-upload
+              class="avatar-uploader"
+              :action="upload.url"
+              :file-list="upload.fileList"
+              :headers="upload.headers"
+              :show-file-list="false"
+              :on-success="successHandle"
+              :before-upload="beforeUploadHandle">
+              <img v-if="form.idCardImg" :src="resourceDomain.resourceDomain + form.idCardImg" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
         </el-form-item>
         <el-form-item label="USDT地址" prop="walletAddr">
           <el-input v-model="form.walletAddr" placeholder="请输入usdt钱包地址" />
@@ -472,6 +478,8 @@
 import { listUser, getUser, delUser, addUser, updateUser ,resetBalance, balanceUser,nodeUser ,setTodayCount} from "@/api/business/user";
 import { listLevel } from "@/api/business/level";
 import { dateFormat } from '@/utils/auth'
+import { getToken } from "@/utils/auth";
+import Cookies from "js-cookie";
 
 export default {
   name: "User",
@@ -585,7 +593,19 @@ export default {
       setOddForm: {
         userName: '',
         orderCount: 0,
-      }
+      },
+      resourceDomain: {},
+      // 上传参数
+      upload: {
+        // 是否禁用上传
+        isUploading: false,
+        // 设置上传的请求头部
+        headers: { Authorization: "Bearer " + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + "/system/info/upload",
+        // 上传的文件列表
+        fileList: []
+      },
     };
   },
   created() {
@@ -597,6 +617,7 @@ export default {
       this.getList();
     }
     this.getLevelList()
+    this.getCookie()
   },
   methods: {
     /** 查询会员列表列表 */
@@ -628,12 +649,11 @@ export default {
         payPwd: null,
         realName: null,
         phone: null,
-        bankName: null,
-        bankNo: null,
-        bankAddr: null,
         creditValue: null,
         levelId: null,
         remake: null,
+        idCardImg: null,
+        idCard: null,
         // updateOrder: null,
       };
       this.resetForm("form");
@@ -683,14 +703,14 @@ export default {
         payPwd: this.form.payPwd,
         realName: this.form.realName,
         phone: this.form.phone,
-        bankName: this.form.bankName,
-        bankNo: this.form.bankNo,
-        bankAddr: this.form.bankAddr,
         creditValue: this.form.creditValue,
         levelId: this.form.levelId,
         remake: this.form.remake,
         updateOrder: this.form.updateOrder,
         walletAddr: this.form.walletAddr,
+        idCardImg: this.form.idCardImg,
+        idCard: this.form.idCard,
+        
       }
       this.$refs["form"].validate(valid => {
         if (valid) {
@@ -891,6 +911,26 @@ export default {
           });
         }
       });
+    },
+    getCookie() {
+      this.resourceDomain = JSON.parse(Cookies.get("config"));
+    },
+    beforeUploadHandle (file) {
+      this.formLoading = true
+      if (file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
+        this.$message.error('只支持jpg、png、gif格式的图片！')
+        return false
+      }
+    },
+    // 上传成功
+    successHandle (response, file, fileList) {
+      this.fileList = fileList
+      if (response && response.code === 200) {
+        this.form.idCardImg = response.data.filePath;
+      } else {
+        // this.$message.error(response.msg)
+      }
+      this.formLoading = false
     },
   }
 };

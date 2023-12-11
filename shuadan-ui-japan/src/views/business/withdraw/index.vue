@@ -129,13 +129,13 @@
         </template>
       </el-table-column>
       <!-- <el-table-column label="实际到账" align="center" prop="realAmount" /> -->
-      <el-table-column label="银行信息" align="center" prop="bankName" width="180">
+      <!-- <el-table-column label="银行信息" align="center" prop="bankName" width="180">
         <template slot-scope="scope">
           <div>{{scope.row.realName}}</div>
           <div>{{scope.row.bankName}}</div>
           <div>{{scope.row.bankNo}}</div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
      <!-- <el-table-column label="手续费" align="center" prop="feeRate">
         <template slot-scope="scope">
           <div>{{scope.row.feeRate}}%</div>
