@@ -1,5 +1,6 @@
 package com.juhai.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class SysOperLogServiceImpl implements ISysOperLogService
     @Override
     public void insertOperlog(SysOperLog operLog)
     {
+        operLog.setOperTime(new Date());
         operLogMapper.insertOperlog(operLog);
     }
 

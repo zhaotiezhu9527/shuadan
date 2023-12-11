@@ -1,5 +1,6 @@
 package com.juhai.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService
     @Override
     public void insertLogininfor(SysLogininfor logininfor)
     {
+        logininfor.setLoginTime(new Date());
         logininforMapper.insertLogininfor(logininfor);
     }
 
