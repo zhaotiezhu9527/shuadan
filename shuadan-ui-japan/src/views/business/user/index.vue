@@ -34,6 +34,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="钱包地址" prop="walletAddr">
+        <el-input
+          type="textarea"
+          :rows="2"
+          v-model="queryParams.walletAddr"
+          placeholder="请输入用户usdt地址"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <!-- <el-form-item label="状态">
         <el-select v-model="queryParams.status" placeholder="请选择">
           <el-option value="" label="全部"></el-option>
@@ -134,7 +144,7 @@
       <el-table-column label="身份证号" align="center" prop="idCard" />
       <el-table-column label="身份证图" align="center" prop="idCardImg" width="120">
         <template slot-scope="scope">
-          <img class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.idCardImg" />
+          <img v-if="scope.row.idCardImg" class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.idCardImg" />
         </template>
       </el-table-column>
       <el-table-column label="USDT钱包地址" align="center" prop="walletAddr" width="200">
@@ -320,7 +330,8 @@
           <el-input v-model="form.idCard" placeholder="请输入用户身份证号" />
         </el-form-item>
         <el-form-item label="身份证图" prop="idCardImg">
-          <el-upload
+          <el-input v-model="form.idCardImg" placeholder="请输入用户身份证号" />
+          <!-- <el-upload
               class="avatar-uploader"
               :action="upload.url"
               :file-list="upload.fileList"
@@ -330,7 +341,7 @@
               :before-upload="beforeUploadHandle">
               <img v-if="form.idCardImg" :src="resourceDomain.resourceDomain + form.idCardImg" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
+            </el-upload> -->
         </el-form-item>
         <el-form-item label="USDT地址" prop="walletAddr">
           <el-input v-model="form.walletAddr" placeholder="请输入usdt钱包地址" />
