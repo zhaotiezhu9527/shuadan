@@ -36,8 +36,6 @@
       </el-form-item>
       <el-form-item label="钱包地址" prop="walletAddr">
         <el-input
-          type="textarea"
-          :rows="2"
           v-model="queryParams.walletAddr"
           placeholder="请输入用户usdt地址"
           clearable
@@ -144,7 +142,7 @@
       <el-table-column label="身份证号" align="center" prop="idCard" />
       <el-table-column label="身份证图" align="center" prop="idCardImg" width="120">
         <template slot-scope="scope">
-          <img v-if="scope.row.idCardImg" class="list-img-class" :src="resourceDomain.resourceDomain + scope.row.idCardImg" />
+          <image-preview :src="resourceDomain.resourceDomain + scope.row.idCardImg" :width="80" :height="80"/>
         </template>
       </el-table-column>
       <el-table-column label="USDT钱包地址" align="center" prop="walletAddr" width="200">
