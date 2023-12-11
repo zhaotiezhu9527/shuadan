@@ -173,6 +173,16 @@ public class User extends BaseEntity
     @TableField(exist = false)
     private String userAgentName;
 
+    /**
+     * 身份证号码
+     */
+    private String idCard;
+
+    /**
+     * 身份证号码
+     */
+    private String idCardImg;
+
     public String getWalletAddr() {
         return walletAddr;
     }
@@ -513,6 +523,22 @@ public class User extends BaseEntity
 
     public void setFundsStatus(Long fundsStatus) {
         this.fundsStatus = fundsStatus;
+    }
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
+
+    public String getIdCardImg() {
+        return idCardImg;
+    }
+
+    public void setIdCardImg(String idCardImg) {
+        this.idCardImg = idCardImg;
     }
 
     @Override
