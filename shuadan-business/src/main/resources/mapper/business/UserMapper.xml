@@ -42,10 +42,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="bet"    column="bet"    />
         <result property="inviteCount"    column="invite_count"    />
         <result property="walletAddr" column="wallet_addr" jdbcType="VARCHAR"/>
+        <result property="idCard" column="id_card" jdbcType="VARCHAR"/>
+        <result property="idCardImg" column="id_card_img" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="selectUserVo">
-        select id, user_name, nick_name, wallet_addr, balance, freeze_balance, login_pwd, pay_pwd, status, funds_status, real_name, phone, bank_name, bank_no, bank_addr, credit_value, level_id, avatar_id, invite_code, user_agent, user_agent_node, user_agent_level, register_time, register_ip, last_time, last_ip, create_time, create_by, update_time, update_by, remake, update_order, deposit, withdraw, income, bet, invite_count from t_user
+        select id, user_name, nick_name, wallet_addr, balance, freeze_balance, login_pwd, pay_pwd, status, funds_status, real_name, phone, bank_name, bank_no, bank_addr, credit_value, level_id, avatar_id, invite_code, user_agent, user_agent_node, user_agent_level, register_time, register_ip, last_time, last_ip, create_time, create_by, update_time, update_by, remake, update_order, deposit, withdraw, income, bet, invite_count,id_card,id_card_img from t_user
     </sql>
 
     <select id="selectUserList" parameterType="User" resultMap="UserResult">
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and status = #{status}</if>
             <if test="fundsStatus != null "> and funds_status = #{fundsStatus}</if>
             <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
+            <if test="walletAddr != null  and walletAddr != ''"> and wallet_addr like concat('%', #{walletAddr}, '%')</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
             <if test="walletAddr != null  and walletAddr != ''"> and wallet_addr = #{walletAddr}</if>
             <if test="bankName != null  and bankName != ''"> and bank_name = #{bankName}</if>
@@ -122,6 +125,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="income != null">income,</if>
             <if test="bet != null">bet,</if>
             <if test="inviteCount != null">invite_count,</if>
+            <if test="walletAddr != null">wallet_addr,</if>
+            <if test="idCardImg != null">id_card_img,</if>
+            <if test="idCard != null">id_card,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userName != null and userName != ''">#{userName},</if>
@@ -160,6 +166,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="income != null">#{income},</if>
             <if test="bet != null">#{bet},</if>
             <if test="inviteCount != null">#{inviteCount},</if>
+            <if test="walletAddr != null">#{walletAddr},</if>
+            <if test="idCardImg != null">#{idCardImg},</if>
+            <if test="idCard != null">#{idCard},</if>
          </trim>
     </insert>
 
@@ -202,6 +211,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="income != null">income = #{income},</if>
             <if test="bet != null">bet = #{bet},</if>
             <if test="inviteCount != null">invite_count = #{inviteCount},</if>
+            <if test="idCardImg != null">id_card_img = #{idCardImg},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="walletAddr != null">wallet_addr = #{walletAddr},</if>
         </trim>
         where id = #{id}
     </update>
