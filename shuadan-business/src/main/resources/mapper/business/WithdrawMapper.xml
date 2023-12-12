@@ -54,6 +54,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgentNode != null  and userAgentNode != ''"> and user_agent_node = #{userAgentNode}</if>
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
             <if test="walletType != null "> and wallet_type = #{walletType}</if>
+
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(order_time,'%Y-%m-%d %H:%i:%S') &gt;= date_format(#{params.beginTime},'%Y-%m-%d %H:%i:%S')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(order_time,'%Y-%m-%d %H:%i:%S') &lt;= date_format(#{params.endTime},'%Y-%m-%d %H:%i:%S')
+            </if>
         </where>
         ORDER BY order_time DESC
     </select>

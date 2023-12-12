@@ -47,6 +47,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="preDetailId != null "> and pre_detail_id = #{preDetailId}</if>
             <if test="countNum != null "> and count_num = #{countNum}</if>
             <if test="commissionMul != null "> and commission_mul = #{commissionMul}</if>
+
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(order_time,'%Y-%m-%d %H:%i:%S') &gt;= date_format(#{params.beginTime},'%Y-%m-%d %H:%i:%S')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(order_time,'%Y-%m-%d %H:%i:%S') &lt;= date_format(#{params.endTime},'%Y-%m-%d %H:%i:%S')
+            </if>
         </where>
         ORDER BY order_time DESC
     </select>
