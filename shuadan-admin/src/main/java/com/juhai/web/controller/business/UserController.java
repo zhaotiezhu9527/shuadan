@@ -3,6 +3,7 @@ package com.juhai.web.controller.business;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -200,8 +201,13 @@ public class UserController extends BaseController
             return AjaxResult.error("请输入6位支付密码");
         }
 
+        User user2 = userService.getUserByName(user.getUserName());
+        if (user2 != null) {
+            return AjaxResult.error("该用户名已存在");
+        }
+
+        Map<String, String> allParamByMap = paramterService.getAllParamByMap();
         if (StringUtils.isBlank(user.getUserAgent())) {
-            Map<String, String> allParamByMap = paramterService.getAllParamByMap();
             user.setUserAgent(allParamByMap.get("default_agent"));
         }
 
@@ -237,7 +243,8 @@ public class UserController extends BaseController
         temp.setLastTime(new Date());
         temp.setLastIp("");
         temp.setRemake(null);
-        temp.setUpdateOrder(0L);
+        Long baoliudingdan = MapUtil.getLong(allParamByMap, "baoliudingdan", 1L);
+        temp.setUpdateOrder(baoliudingdan);
         temp.setDeposit(new BigDecimal("0"));
         temp.setWithdraw(new BigDecimal("0"));
         temp.setIncome(new BigDecimal("0"));
