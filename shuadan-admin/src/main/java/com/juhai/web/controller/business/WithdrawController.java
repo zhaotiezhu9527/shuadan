@@ -193,7 +193,7 @@ public class WithdrawController extends BaseController
         return toAjax(true);
     }
 
-    @PreAuthorize("@ss.hasPermi('business:withdraw:list')")
+    @Anonymous
     @GetMapping(value = "/getNotice")
     public AjaxResult getNotice()
     {
