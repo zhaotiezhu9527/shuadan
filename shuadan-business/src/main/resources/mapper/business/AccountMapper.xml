@@ -36,6 +36,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userAgentLevel != null "> and user_agent_level = #{userAgentLevel}</if>
             <if test="refNo != null  and refNo != ''"> and ref_no = #{refNo}</if>
             <if test="optTime != null "> and opt_time = #{optTime}</if>
+
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(opt_time,'%Y-%m-%d %H:%i:%S') &gt;= date_format(#{params.beginTime},'%Y-%m-%d %H:%i:%S')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(opt_time,'%Y-%m-%d %H:%i:%S') &lt;= date_format(#{params.endTime},'%Y-%m-%d %H:%i:%S')
+            </if>
         </where>
         ORDER BY opt_time DESC
     </select>

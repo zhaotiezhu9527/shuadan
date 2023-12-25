@@ -21,7 +21,7 @@ import com.juhai.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value ="t_deposit")
-public class Deposit
+public class Deposit extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
