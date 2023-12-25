@@ -22,7 +22,7 @@ public class Information extends BaseEntity
     private Long id;
 
     /** 用户名 */
-    @Excel(name = "用户名")
+//    @Excel(name = "用户名")
     private String userName;
 
     /** 手机号 */
@@ -30,27 +30,27 @@ public class Information extends BaseEntity
     private String userPhone;
 
     /** 年龄 */
-    @Excel(name = "年龄")
+//    @Excel(name = "年龄")
     private Long userAge;
 
     /** 月薪 */
-    @Excel(name = "月薪")
+//    @Excel(name = "月薪")
     private String userSalary;
 
     /** 工作 */
-    @Excel(name = "工作")
+//    @Excel(name = "工作")
     private String userJob;
 
     /** 车房 */
-    @Excel(name = "车房")
+//    @Excel(name = "车房")
     private String userCar;
 
     /** 婚姻情况 */
-    @Excel(name = "婚姻情况")
+//    @Excel(name = "婚姻情况")
     private String userMarriage;
 
     /** FB帐号 */
-    @Excel(name = "FB帐号")
+//    @Excel(name = "FB帐号")
     private String userFb;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
