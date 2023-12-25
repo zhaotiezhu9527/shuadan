@@ -1,26 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户名" prop="userName">
-        <el-input
-          v-model="queryParams.userName"
-          placeholder="请输入用户名"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="手机号" prop="userPhone">
         <el-input
           v-model="queryParams.userPhone"
           placeholder="请输入手机号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="FB账号" prop="userFb">
-        <el-input
-          v-model="queryParams.userFb"
-          placeholder="请输入用户名"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -92,14 +76,7 @@
     <el-table v-loading="loading" :data="informationList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
-      <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="手机号" align="center" prop="userPhone" />
-      <el-table-column label="年龄" align="center" prop="userAge" />
-      <el-table-column label="月薪" align="center" prop="userSalary" />
-      <el-table-column label="工作" align="center" prop="userJob" />
-      <el-table-column label="车房" align="center" prop="userCar" />
-      <el-table-column label="婚姻情况" align="center" prop="userMarriage" />
-      <el-table-column label="FB帐号" align="center" prop="userFb" />
       <el-table-column label="时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
@@ -136,37 +113,8 @@
     <!-- 添加或修改收集用户列表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入用户名" />
-        </el-form-item>
         <el-form-item label="手机号" prop="userPhone">
           <el-input v-model="form.userPhone" placeholder="请输入手机号" />
-        </el-form-item>
-        <el-form-item label="年龄" prop="userAge">
-          <el-input v-model="form.userAge" placeholder="请输入年龄" />
-        </el-form-item>
-        <el-form-item label="月薪" prop="userSalary">
-          <el-input v-model="form.userSalary" placeholder="请输入月薪" />
-        </el-form-item>
-        <el-form-item label="工作" prop="userJob">
-          <el-input v-model="form.userJob" placeholder="请输入工作" />
-        </el-form-item>
-        <el-form-item label="车房" prop="userCar">
-          <el-input v-model="form.userCar" placeholder="请输入车房" />
-        </el-form-item>
-        <el-form-item label="婚姻情况" prop="userMarriage">
-          <el-input v-model="form.userMarriage" placeholder="请输入婚姻情况" />
-        </el-form-item>
-        <el-form-item label="FB帐号" prop="userFb">
-          <el-input v-model="form.userFb" placeholder="请输入FB帐号" />
-        </el-form-item>
-        <el-form-item label="修改时间" prop="modify">
-          <el-date-picker clearable
-            v-model="form.modify"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择修改时间">
-          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -269,16 +217,7 @@ export default {
     reset() {
       this.form = {
         id: null,
-        userName: null,
         userPhone: null,
-        userAge: null,
-        userSalary: null,
-        userJob: null,
-        userCar: null,
-        userMarriage: null,
-        userFb: null,
-        createTime: null,
-        modify: null
       };
       this.resetForm("form");
     },
