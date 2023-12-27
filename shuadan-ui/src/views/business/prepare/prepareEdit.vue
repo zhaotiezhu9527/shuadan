@@ -87,6 +87,14 @@
     </div>
     <el-dialog title="商品详情" :visible.sync="queryOpen" width="1000px" append-to-body>
         <el-form :model="listParams" ref="queryForm" size="small" :inline="true" label-width="68px">
+            <el-form-item label="商品id" prop="id">
+                <el-input
+                v-model="listParams.id"
+                placeholder="请输入商品名称"
+                clearable
+                />
+                
+            </el-form-item>
             <el-form-item label="商品名称" prop="goodsName">
                 <el-input
                 v-model="listParams.goodsName"
@@ -189,6 +197,7 @@ export default {
             goodsList:[],//商品列表
             addList:[],//添加数据
             listParams: {
+                id: "",// 商品id
                 goodsName: "", 
                 minPrice: "",
                 maxPrice: "",
