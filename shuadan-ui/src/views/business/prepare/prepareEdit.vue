@@ -90,7 +90,7 @@
             <el-form-item label="商品id" prop="id">
                 <el-input
                 v-model="listParams.id"
-                placeholder="请输入商品名称"
+                placeholder="请输入商品id"
                 clearable
                 />
                 
